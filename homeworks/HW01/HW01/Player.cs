@@ -21,9 +21,11 @@
             {
                 if (Adventurers[i].AddExp(rnd.Next(Constants.MinExpReward, Constants.MaxExpReward)))
                 {
-                    Printer.LevelUpMessage(Adventurers[i]);
+                    Utilities.LevelUpMessage(Adventurers[i]);
                 }
             }
+            DiamondPieces++;
+            DungeonNumber++;
         }
 
         public void PlayerLost()
@@ -33,7 +35,7 @@
             {
                 if (Adventurers[i].AddExp((int)(rnd.Next(Constants.MinExpReward, Constants.MaxExpReward) * Constants.LossPenalty)))
                 {
-                    Printer.LevelUpMessage(Adventurers[i]);
+                    Utilities.LevelUpMessage(Adventurers[i]);
                 }
             }
         }
@@ -48,7 +50,7 @@
             {
                 parsed = true;
 
-                string? line = IOHandler.ReadLine();
+                string? line = Utilities.InputOutputHandler.ReadLine();
                 if (line == null)
                 {
                     parsed = false;
@@ -59,7 +61,7 @@
 
                 if (picks.Length != Constants.PlayerSquadSize)
                 {
-                    IOHandler.WriteLine("Incorrect amount of numbers! Try again:");
+                    Utilities.InputOutputHandler.WriteLine("Incorrect amount of numbers! Try again:");
                     parsed = false;
                     continue;
                 }
@@ -68,7 +70,7 @@
                 {
                     if (!int.TryParse(picks[i], out playerChoices[i]))
                     {
-                        IOHandler.WriteLine("One of the inputs wasn't a number! Try again:");
+                        Utilities.InputOutputHandler.WriteLine("One of the inputs wasn't a number! Try again:");
                         parsed = false;
                         break;
                     }
@@ -77,7 +79,7 @@
 
                     if (playerChoices[i] < 0 || playerChoices[i] >= maxAllowedNumber)
                     {
-                        IOHandler.WriteLine("Number is out of range! Try again:");
+                        Utilities.InputOutputHandler.WriteLine("Number is out of range! Try again:");
                         parsed = false;
                         break;
                     }
@@ -86,7 +88,7 @@
                     {
                         if (playerChoices[i] == playerChoices[j])
                         {
-                            IOHandler.WriteLine("You chose the same number multiple times! Try again:");
+                            Utilities.InputOutputHandler.WriteLine("You chose the same number multiple times! Try again:");
                             i = Constants.PlayerSquadSize;
                             parsed = false;
                             break;
@@ -103,11 +105,11 @@
         {
             for (int i = 0; i < AdventurerList.Length; i++)
             {
-                IOHandler.Write((i + 1) + ": ");
-                Printer.PrintEntityBasic(AdventurerList[i]);
+                Utilities.InputOutputHandler.Write((i + 1) + ": ");
+                Utilities.PrintEntityBasic(AdventurerList[i]);
             }
 
-            IOHandler.WriteLine("\nPlease select your fighters (" + Constants.PlayerSquadSize + " numbers on a line):");
+            Utilities.InputOutputHandler.WriteLine("\nPlease select your fighters (" + Constants.PlayerSquadSize + " numbers on a line):");
 
             int[] choices = GetPlayerChoices(AdventurerList.Length);
 
@@ -123,6 +125,13 @@
 
         public void ReorderAdventurers()
         {
+            Utilities.InputOutputHandler.WriteLine("Choose new order of your adventurers:");
+
+            foreach (Adventurer adventurer in Adventurers)
+            {
+                Utilities.PrintEntityWithLevels(adventurer);
+            }
+
             int[] choices = GetPlayerChoices(Constants.PlayerSquadSize);
 
             Adventurer[] adventurers = new Adventurer[Constants.PlayerSquadSize];
@@ -133,6 +142,24 @@
             }
 
             Adventurers = adventurers;
+
+            Utilities.InputOutputHandler.WriteLine("The new order of your adventurers:");
+
+            foreach (Adventurer adventurer in Adventurers)
+            {
+                Utilities.PrintEntityWithLevels(adventurer);
+            }
+        }
+
+        public void PrintPlayerInfo()
+        {
+            Utilities.InputOutputHandler.WriteLine("Diamond pieces collected: " + DiamondPieces);
+            Utilities.InputOutputHandler.WriteLine("Your Adventurers:");
+
+            foreach (Adventurer adventurer in Adventurers)
+            {
+                Utilities.PrintEntityWithLevels(adventurer);
+            }
         }
     }
 }

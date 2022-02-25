@@ -4,8 +4,6 @@
     {
         public void WriteLine(string? line);
 
-        public void WriteLine(string? line, string v);
-
         public void Write(string? line);
 
         public string? ReadLine();

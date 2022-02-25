@@ -9,30 +9,33 @@ Console.WriteLine("Hello, World!");
 
 //Console.WriteLine(Enum.GetName(typeof(Constants.Commands), Constants.Commands.rip));
 
-var entity = new Adventurer(Entities.AdventurerList[0]);
+//var entity = new Adventurer(Entities.AdventurerList[0]);
 
-Printer.PrintEntityWithLevels(entity);
+//Utilities.PrintEntityWithLevels(entity);
 
-Console.WriteLine(Entities.AdventurerList[0]);
+//Console.WriteLine(Entities.AdventurerList[0]);
 
-Printer.LevelUpMessage(entity);
+//Utilities.LevelUpMessage(entity);
 
-Random rnd = new Random();
+//Random rnd = new Random();
 
-var my_list = Entities.AdventurerList.OrderBy(x => rnd.Next()).Take(3).ToList();
+//var my_list = Entities.AdventurerList.OrderBy(x => rnd.Next()).Take(3).ToList();
 
-Console.WriteLine(my_list[0]);
+//Console.WriteLine(my_list[0]);
 
-var player = new Player(Entities.AdventurerList);
+//var player = new Player(Entities.AdventurerList);
 
-foreach (var i in player.Adventurers)
-{
-    Console.WriteLine(i);
-}
+//foreach (var i in player.Adventurers)
+//{
+//    Console.WriteLine(i);
+//}
 
-player.ReorderAdventurers();
+//player.ReorderAdventurers();
 
-foreach (var i in player.Adventurers)
-{
-    Console.WriteLine(i);
-}
+//foreach (var i in player.Adventurers)
+//{
+//    Console.WriteLine(i);
+//}
+
+var game = new Game();
+game.Run();

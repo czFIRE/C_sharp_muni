@@ -7,11 +7,6 @@
             return Console.ReadLine();
         }
 
-        public static void WriteLine(string? line, string v)
-        {
-            Console.WriteLine(line);
-        }
-
         public static void WriteLine(string? line)
         {
             Console.WriteLine(line);
@@ -46,11 +41,6 @@
         }
 
         void IIOHandler.WriteLine(string? line)
-        {
-            WriteLine(line);
-        }
-
-        void IIOHandler.WriteLine(string? line, string v)
         {
             WriteLine(line);
         }

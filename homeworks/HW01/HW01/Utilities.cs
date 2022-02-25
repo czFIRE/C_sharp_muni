@@ -1,8 +1,8 @@
 ﻿namespace HW01
 {
-    internal static class Printer
+    internal static class Utilities
     {
-        private static IIOHandler InputOutputHandler { get; set; } = new IOHandler();
+        public static IIOHandler InputOutputHandler { get; set; } = new IOHandler();
 
         // This should probably take EntityColour instead of Console color
         public static void PrintColouredName(ConsoleColor colour, string name)
@@ -38,12 +38,13 @@
 
         public static void PrintIncorectCommandError(string command)
         {
-            InputOutputHandler.WriteLine("Command '" + command + "' is invalid!");
+            InputOutputHandler.WriteLine("Command '" + command + "' is invalid! \nPlease try again:");
         }
 
         public static void PrintSupportedCommands()
         {
-            InputOutputHandler.WriteLine("Your commands are: {0}", string.Join(", ", Enum.GetNames(typeof(Constants.Commands))));
+            var stuff = Enum.GetNames(typeof(Constants.Commands));
+            InputOutputHandler.WriteLine("Your commands are: " + string.Join(", ", stuff));
         }
 
 
