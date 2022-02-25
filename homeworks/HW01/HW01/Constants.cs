@@ -42,7 +42,8 @@
 
         public const int LevelUpThreshold = 100;
 
-
+        public const int MinExpReward = 50;
+        public const int MaxExpReward = 150;
 
         public static int EffectiveAttack(Colours attacking, Colours attacked)
         {

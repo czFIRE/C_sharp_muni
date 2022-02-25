@@ -37,7 +37,7 @@
 
             if (this.Experience >= Constants.LevelUpThreshold)
             {
-                this.LevelUp(exp / Constants.LevelUpThreshold);
+                this.LevelUp(this.Experience / Constants.LevelUpThreshold);
                 this.Experience %= Constants.LevelUpThreshold;
 
                 return true;

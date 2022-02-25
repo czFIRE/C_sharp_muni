@@ -14,3 +14,5 @@ var entity = new Entity(Entities.EntityList[0]);
 Printer.PrintEntityWithLevels(entity);
 
 Console.WriteLine(Entities.EntityList[0]);
+
+Printer.LevelUpMessage(entity);
