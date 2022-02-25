@@ -56,5 +56,10 @@
             }
         }
 
+        public override string ToString()
+        {
+            return Name + ": " + Attack + " Attack, " + Hitpoints + " HP, " + Speed + " Speed";
+        }
+
     }
 }

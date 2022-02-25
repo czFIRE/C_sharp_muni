@@ -75,7 +75,7 @@
 
                     playerChoices[i]--;
 
-                    if (playerChoices[i] < 0 || playerChoices[i] > maxAllowedNumber)
+                    if (playerChoices[i] < 0 || playerChoices[i] >= maxAllowedNumber)
                     {
                         IOHandler.WriteLine("Number is out of range! Try again:");
                         parsed = false;
@@ -107,7 +107,7 @@
                 Printer.PrintEntityBasic(AdventurerList[i]);
             }
 
-            IOHandler.WriteLine("\nPlease select your fighters ( " + Constants.PlayerSquadSize + " numbers on a line):");
+            IOHandler.WriteLine("\nPlease select your fighters (" + Constants.PlayerSquadSize + " numbers on a line):");
 
             int[] choices = GetPlayerChoices(AdventurerList.Length);
 
@@ -119,6 +119,20 @@
             }
 
             return adventurers;
+        }
+
+        public void ReorderAdventurers()
+        {
+            int[] choices = GetPlayerChoices(Constants.PlayerSquadSize);
+
+            Adventurer[] adventurers = new Adventurer[Constants.PlayerSquadSize];
+
+            for(int i = 0; i < Constants.PlayerSquadSize; i++)
+            {
+                adventurers[i] = Adventurers[choices[i]];
+            }
+
+            Adventurers = adventurers;
         }
     }
 }

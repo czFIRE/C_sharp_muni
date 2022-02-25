@@ -23,4 +23,16 @@ var my_list = Entities.AdventurerList.OrderBy(x => rnd.Next()).Take(3).ToList();
 
 Console.WriteLine(my_list[0]);
 
-Player.GetPlayerChoices(9);
+var player = new Player(Entities.AdventurerList);
+
+foreach (var i in player.Adventurers)
+{
+    Console.WriteLine(i);
+}
+
+player.ReorderAdventurers();
+
+foreach (var i in player.Adventurers)
+{
+    Console.WriteLine(i);
+}
