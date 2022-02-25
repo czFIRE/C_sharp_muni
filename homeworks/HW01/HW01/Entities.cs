@@ -7,7 +7,7 @@
     {
         // Yes, this should be done as a input from a file
         // No, I am not doing it, I am lazy :D
-        public static (string, int, int, int, Constants.Colours)[] EntityList =
+        private static (string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour)[] EntityList =
         {
             ("Thason", 4, 6, 4, Constants.Colours.Blue),
             ("Geralt", 6, 4, 4, Constants.Colours.Red),
@@ -20,5 +20,9 @@
             ("Legolas", 6, 1, 5, Constants.Colours.Green),
 
         };
+
+        public static (string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour)[] AdventurerList = EntityList;
+
+        public static (string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour)[] EnemyList = EntityList;
     }
 }

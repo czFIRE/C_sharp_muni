@@ -9,10 +9,18 @@ Console.WriteLine("Hello, World!");
 
 //Console.WriteLine(Enum.GetName(typeof(Constants.Commands), Constants.Commands.rip));
 
-var entity = new Entity(Entities.EntityList[0]);
+var entity = new Adventurer(Entities.AdventurerList[0]);
 
 Printer.PrintEntityWithLevels(entity);
 
-Console.WriteLine(Entities.EntityList[0]);
+Console.WriteLine(Entities.AdventurerList[0]);
 
 Printer.LevelUpMessage(entity);
+
+Random rnd = new Random();
+
+var my_list = Entities.AdventurerList.OrderBy(x => rnd.Next()).Take(3).ToList();
+
+Console.WriteLine(my_list[0]);
+
+Player.GetPlayerChoices(9);

@@ -20,8 +20,8 @@
             this.Colour = colour;
         }
 
-        public Entity((string, int, int, int, Constants.Colours) EntityTuple) :
-            this(EntityTuple.Item1, EntityTuple.Item2, EntityTuple.Item3, EntityTuple.Item4, EntityTuple.Item5)
+        public Entity((string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour) EntityTuple) :
+            this(EntityTuple.Name, EntityTuple.Attack, EntityTuple.Hitpoints, EntityTuple.Speed, EntityTuple.Colour)
         {
         }
 

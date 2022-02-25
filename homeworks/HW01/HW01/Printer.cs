@@ -21,6 +21,13 @@
             InputOutputHandler.WriteLine(": " + entity.Attack + " Attack, " + entity.Hitpoints + " HP, " + entity.Speed + " Speed");
         }
 
+        public static void PrintEntityBasic((string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour) EntityTuple)
+        {
+            PrintColouredName((ConsoleColor) EntityTuple.Colour, EntityTuple.Name);
+
+            InputOutputHandler.WriteLine(": " + EntityTuple.Attack + " Attack, " + EntityTuple.Hitpoints + " HP, " + EntityTuple.Speed + " Speed");
+        }
+
         public static void PrintEntityWithLevels(Entity entity)
         {
             PrintColouredName((ConsoleColor)entity.Colour, entity.Name);

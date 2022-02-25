@@ -24,7 +24,7 @@
         public static string[] KnownCommands = { "inspect", "fight", "info", "reorder", "rip" };
 
         public const int DiamondShards = 7;
-        public const int Caves = DiamondShards;
+        public const int DungeonCount = DiamondShards;
 
         public const int PlayerSquadSize = 3;
         public const int EnemySquadSize = PlayerSquadSize;
@@ -32,7 +32,7 @@
         public const int EffectiveAttackModifier = 2;
         public const int BaseAttackModifier = 1;
 
-        public const float BailoutPenalty = 0.5f;
+        public const float LossPenalty = 0.5f;
 
         public const int MinDMGIncrease = 1;
         public const int MaxDMGIncrease = 3;

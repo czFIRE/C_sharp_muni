@@ -2,6 +2,29 @@
 {
     internal class GameLoopHandler : IGame
     {
+        public Player PlayerData { get; set; }
+
+        public Dungeon[] Dungeons { get; set; }
+
+        public GameLoopHandler()
+        {
+            Dungeons = new Dungeon[Constants.DungeonCount];
+            Random rnd = new Random();
+            for (int i = 0; i < Dungeons.Length; i++)
+            {
+                var loadedData = Entities.EnemyList.OrderBy(x => rnd.Next()).Take(Constants.EnemySquadSize).ToArray();
+                Enemy[] enemies = new Enemy[Constants.EnemySquadSize];
+
+                for (int j = 0; j < Constants.EnemySquadSize; j++)
+                {
+                    enemies[j] = new Enemy(loadedData[j]);
+                }
+
+                Dungeons[i] = new Dungeon(enemies);
+            }
+
+
+        }
 
         public int Run()
         {
@@ -10,8 +33,13 @@
             // initialize dungeons
 
             // 
+
+
+
             return 0;
         }
+
+
 
         public int ParsePlayerCommand()
         {
