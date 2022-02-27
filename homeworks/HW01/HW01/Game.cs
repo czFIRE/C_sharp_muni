@@ -25,11 +25,19 @@
 
             Utilities.PrintSupportedCommands();
 
+            // TODO: Fix this loop
             while (loop)
             {
+                Utilities.InputOutputHandler.WriteLine("");
                 if (ParsePlayerCommand() != 0)
                 {
                     loop = false;
+                }
+
+                if (PlayerData.DiamondPieces == Constants.DiamondShards) 
+                {
+                    Utilities.InputOutputHandler.WriteLine("You've collected all the diamond shards, congratualitions!");
+                    loop = false; 
                 }
             }
 
@@ -41,11 +49,11 @@
         {
             var command = Utilities.InputOutputHandler.ReadLine();
 
+            Utilities.InputOutputHandler.WriteLine("");
+
             if (!Enum.TryParse(command, out Constants.Commands cmd))
             {
-#pragma warning disable CS8604 // Possible null reference argument, but it doesn't matter for writing.
                 Utilities.PrintIncorectCommandError(command);
-#pragma warning restore CS8604 // Possible null reference argument, but it doesn't matter for writing.
                 return 0;
             }
 
@@ -56,7 +64,7 @@
                     Dungeons[PlayerData.DungeonNumber].PrintDungeonDeffenders();
                     break;
                 case Constants.Commands.fight:
-                    Console.WriteLine("Not implemented");
+                    this.Fight();
                     break;
                 case Constants.Commands.info:
                     PlayerData.PrintPlayerInfo();
@@ -69,11 +77,76 @@
                     return 1;
                 // new unsupported command
                 default:
-                    Utilities.InputOutputHandler.WriteLine("Internal error, add new commnad to switch");
+                    Utilities.InputOutputHandler.WriteLine("Internal error, add new commnad to switch!");
                     return 2;
             }
 
             return 0;
+        }
+
+        public bool Fight()
+        {
+            // do the rounds
+
+            int rounds = 0;
+
+            Dungeon currDungeon = Dungeons[PlayerData.DungeonNumber];
+
+            while (currDungeon.EnemiesAlive > 0 && PlayerData.AdventurersAlive > 0)
+            {
+                rounds++;
+                Enemy currEnemy = currDungeon.Enemies[Constants.EnemySquadSize - currDungeon.EnemiesAlive];
+                Adventurer currAdventurer = PlayerData.Adventurers[Constants.PlayerSquadSize - PlayerData.AdventurersAlive];
+
+                Utilities.InputOutputHandler.Write("Round " + rounds + ": ");
+                Utilities.PrintColouredName(currAdventurer);
+                Utilities.InputOutputHandler.Write(" vs ");
+                Utilities.PrintColouredName(currEnemy);
+                Utilities.InputOutputHandler.WriteLine("");
+
+                // choose who starts
+
+                // do the fight
+
+                while (currEnemy.Hitpoints > 0 && currAdventurer.Hitpoints > 0)
+                {
+                    if (currAdventurer.Speed >= currEnemy.Speed)
+                    {
+                        if (currAdventurer.AttackEntity(currEnemy) <= 0) 
+                            break;
+                        currEnemy.AttackEntity(currAdventurer);
+                    }
+                    else
+                    {
+                        if (currEnemy.AttackEntity(currAdventurer) <= 0)
+                            break;
+                        currAdventurer.AttackEntity(currEnemy);
+                    }
+                }
+
+                // print outcomes
+                if (currEnemy.Hitpoints <= 0)
+                {
+                    Utilities.PrintColouredName(currEnemy);
+                    Utilities.InputOutputHandler.WriteLine(" is defeated!");
+                    currDungeon.EnemiesAlive--;
+                }
+                else
+                {
+                    Utilities.PrintColouredName(currAdventurer);
+                    Utilities.InputOutputHandler.WriteLine(" is defeated!");
+                    PlayerData.AdventurersAlive--;
+                }
+            }
+
+            if (currDungeon.EnemiesAlive == 0)
+            {
+                PlayerData.PlayerWon();
+                return true;
+            }
+
+            PlayerData.PlayerLost();
+            return false;
         }
     }
 }

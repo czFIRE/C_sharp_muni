@@ -9,6 +9,8 @@
         public int DiamondPieces { get; set; } = 0;
         public int DungeonNumber { get; set; } = 0;
 
+        public int AdventurersAlive { get; set; } = Constants.PlayerSquadSize;
+
         public Player((string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour)[] AdventurerList)
         {
             Adventurers = GetPlayerAdventurers(AdventurerList);
@@ -17,27 +19,37 @@
         public void PlayerWon()
         {
             Random rnd = new Random();
+            int expAmount = rnd.Next(Constants.MinExpReward, Constants.MaxExpReward);
+
+            Utilities.InputOutputHandler.WriteLine("You have won the match! Adventurers gain " + expAmount + " XP! You acquired the diamond piece!");
+
             for (int i = 0; i < Adventurers.Length; i++)
             {
-                if (Adventurers[i].AddExp(rnd.Next(Constants.MinExpReward, Constants.MaxExpReward)))
-                {
-                    Utilities.LevelUpMessage(Adventurers[i]);
-                }
+                Adventurers[i].AddExp(expAmount);
             }
+
             DiamondPieces++;
             DungeonNumber++;
+
+            this.ResetAdventurerHP();
         }
 
         public void PlayerLost()
         {
             Random rnd = new Random();
+            int expAmount = (int)(rnd.Next(Constants.MinExpReward, Constants.MaxExpReward) * Constants.LossPenalty);
+
+            Utilities.InputOutputHandler.WriteLine("You have lost the match! Adventurers gain " + expAmount + " XP!");
+
             for (int i = 0; i < Adventurers.Length; i++)
             {
-                if (Adventurers[i].AddExp((int)(rnd.Next(Constants.MinExpReward, Constants.MaxExpReward) * Constants.LossPenalty)))
+                if (Adventurers[i].AddExp(expAmount))
                 {
                     Utilities.LevelUpMessage(Adventurers[i]);
                 }
             }
+
+            this.ResetAdventurerHP();
         }
 
         public static int[] GetPlayerChoices(int maxAllowedNumber)
@@ -56,6 +68,8 @@
                     parsed = false;
                     continue;
                 }
+
+                line = line.Trim();
 
                 string[] picks = line.Split(' ');
 
@@ -136,7 +150,7 @@
 
             Adventurer[] adventurers = new Adventurer[Constants.PlayerSquadSize];
 
-            for(int i = 0; i < Constants.PlayerSquadSize; i++)
+            for (int i = 0; i < Constants.PlayerSquadSize; i++)
             {
                 adventurers[i] = Adventurers[choices[i]];
             }
@@ -160,6 +174,16 @@
             {
                 Utilities.PrintEntityWithLevels(adventurer);
             }
+        }
+
+        public void ResetAdventurerHP()
+        {
+            foreach (Adventurer adventurer in Adventurers)
+            {
+                adventurer.ResetHP();
+            }
+
+            AdventurersAlive = Constants.PlayerSquadSize;
         }
     }
 }

@@ -14,6 +14,11 @@
             InputOutputHandler.SetForegroundColour(currentColour);
         }
 
+        public static void PrintColouredName(Entity entity)
+        {
+            PrintColouredName((ConsoleColor)entity.Colour, entity.Name);
+        }
+
         public static void PrintEntityBasic(Entity entity)
         {
             PrintColouredName((ConsoleColor)entity.Colour, entity.Name);
@@ -23,7 +28,7 @@
 
         public static void PrintEntityBasic((string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour) EntityTuple)
         {
-            PrintColouredName((ConsoleColor) EntityTuple.Colour, EntityTuple.Name);
+            PrintColouredName((ConsoleColor)EntityTuple.Colour, EntityTuple.Name);
 
             InputOutputHandler.WriteLine(": " + EntityTuple.Attack + " Attack, " + EntityTuple.Hitpoints + " HP, " + EntityTuple.Speed + " Speed");
         }
@@ -36,7 +41,7 @@
                               + entity.Level + ", " + entity.Experience + "/" + Constants.LevelUpThreshold + "XP");
         }
 
-        public static void PrintIncorectCommandError(string command)
+        public static void PrintIncorectCommandError(string? command)
         {
             InputOutputHandler.WriteLine("Command '" + command + "' is invalid! \nPlease try again:");
         }
@@ -57,7 +62,7 @@
         public static void LevelUpMessage(Adventurer adventurer)
         {
             InputOutputHandler.Write("Adventurer ");
-            LevelUpMessage((Entity) adventurer);
+            LevelUpMessage((Entity)adventurer);
         }
     }
 }

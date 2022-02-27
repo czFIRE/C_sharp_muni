@@ -4,6 +4,8 @@
     {
         public Enemy[] Enemies { get; private set; }
 
+        public int EnemiesAlive { get; set; } = Constants.EnemySquadSize;
+
         public Dungeon(Enemy[] dungeonDeffenders)
         {
             Enemies = dungeonDeffenders;
