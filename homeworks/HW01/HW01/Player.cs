@@ -13,40 +13,28 @@
 
         public Player((string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour)[] AdventurerList)
         {
-            Adventurers = GetPlayerAdventurers(AdventurerList);
+            Adventurers = PickPlayerAdventurers(AdventurerList);
         }
 
-        public void PlayerWon()
+        public void PlayerFightEnd(bool won)
         {
             Random rnd = new Random();
-            int expAmount = rnd.Next(Constants.MinExpReward, Constants.MaxExpReward);
+            int expAmount = (int)(rnd.Next(Constants.MinExpReward, Constants.MaxExpReward) * (won ? 1 : Constants.LossPenalty));
 
-            Utilities.InputOutputHandler.WriteLine("You have won the match! Adventurers gain " + expAmount + " XP! You acquired the diamond piece!");
+            if (won)
+            {
+                Utilities.InputOutputHandler.WriteLine("You have won the match! Adventurers gain " + expAmount + " XP! You acquired the diamond piece!");
+                this.DiamondPieces++;
+                this.DungeonNumber++;
+            }
+            else
+            {
+                Utilities.InputOutputHandler.WriteLine("You have lost the match! Adventurers gain " + expAmount + " XP!");
+            }
 
             for (int i = 0; i < Adventurers.Length; i++)
             {
                 Adventurers[i].AddExp(expAmount);
-            }
-
-            DiamondPieces++;
-            DungeonNumber++;
-
-            this.ResetAdventurerHP();
-        }
-
-        public void PlayerLost()
-        {
-            Random rnd = new Random();
-            int expAmount = (int)(rnd.Next(Constants.MinExpReward, Constants.MaxExpReward) * Constants.LossPenalty);
-
-            Utilities.InputOutputHandler.WriteLine("You have lost the match! Adventurers gain " + expAmount + " XP!");
-
-            for (int i = 0; i < Adventurers.Length; i++)
-            {
-                if (Adventurers[i].AddExp(expAmount))
-                {
-                    Utilities.LevelUpMessage(Adventurers[i]);
-                }
             }
 
             this.ResetAdventurerHP();
@@ -115,7 +103,7 @@
             return playerChoices;
         }
 
-        public static Adventurer[] GetPlayerAdventurers((string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour)[] AdventurerList)
+        public static Adventurer[] PickPlayerAdventurers((string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour)[] AdventurerList)
         {
             for (int i = 0; i < AdventurerList.Length; i++)
             {
@@ -152,7 +140,7 @@
 
             for (int i = 0; i < Constants.PlayerSquadSize; i++)
             {
-                adventurers[i] = Adventurers[choices[i]];
+                adventurers[choices[i]] = Adventurers[i];
             }
 
             Adventurers = adventurers;

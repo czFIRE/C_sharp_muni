@@ -24,5 +24,7 @@
         public static (string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour)[] AdventurerList = EntityList;
 
         public static (string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour)[] EnemyList = EntityList;
+
+        // I should probably make a method to generate a random entity as an enemy
     }
 }

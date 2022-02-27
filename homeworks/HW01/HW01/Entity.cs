@@ -60,7 +60,7 @@
             return false;
         }
 
-        public void LevelUp(int levels)
+        public void LevelUp(int levels, bool print = true)
         {
             Random rnd = new Random();
 
@@ -69,7 +69,8 @@
                 this.Attack += rnd.Next(Constants.MinDMGIncrease, Constants.MaxDMGIncrease + 1);
                 this.MaxHitpoints += rnd.Next(Constants.MinHPIncrease, Constants.MaxHPIncrease + 1);
 
-                Utilities.LevelUpMessage(this);
+                if (print)
+                    Utilities.LevelUpMessage(this);
             }
         }
 
@@ -81,7 +82,6 @@
         public void ResetHP()
         {
             this.Hitpoints = this.MaxHitpoints;
-            ;
         }
     }
 }

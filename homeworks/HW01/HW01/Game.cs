@@ -14,6 +14,7 @@
             for (int i = 0; i < Dungeons.Length; i++)
             {
                 Dungeons[i] = new Dungeon(Entities.EnemyList.OrderBy(x => rnd.Next()).Take(Constants.EnemySquadSize).ToArray());
+                Dungeons[i].LevelUpEnemies(i);
             }
 
             PlayerData = new Player(Entities.AdventurerList);
@@ -21,27 +22,27 @@
 
         public int Run()
         {
-            bool loop = true;
 
             Utilities.PrintSupportedCommands();
 
             // TODO: Fix this loop
-            while (loop)
+            // Yes, I know that break exists
+            while (true)
             {
                 Utilities.InputOutputHandler.WriteLine("");
                 if (ParsePlayerCommand() != 0)
                 {
-                    loop = false;
+                    break;
                 }
 
-                if (PlayerData.DiamondPieces == Constants.DiamondShards) 
+                if (PlayerData.DiamondPieces == Constants.DiamondShards)
                 {
                     Utilities.InputOutputHandler.WriteLine("You've collected all the diamond shards, congratualitions!");
-                    loop = false; 
+                    Utilities.InputOutputHandler.WriteLine("");
+                    break;
                 }
             }
 
-            // jiny return value
             return 0;
         }
 
@@ -75,6 +76,9 @@
                 case Constants.Commands.rip:
                     Utilities.InputOutputHandler.WriteLine("You have lost the game :(");
                     return 1;
+                case Constants.Commands.help:
+                    Utilities.PrintSupportedCommands();
+                    break;
                 // new unsupported command
                 default:
                     Utilities.InputOutputHandler.WriteLine("Internal error, add new commnad to switch!");
@@ -112,7 +116,7 @@
                 {
                     if (currAdventurer.Speed >= currEnemy.Speed)
                     {
-                        if (currAdventurer.AttackEntity(currEnemy) <= 0) 
+                        if (currAdventurer.AttackEntity(currEnemy) <= 0)
                             break;
                         currEnemy.AttackEntity(currAdventurer);
                     }
@@ -141,11 +145,12 @@
 
             if (currDungeon.EnemiesAlive == 0)
             {
-                PlayerData.PlayerWon();
+                PlayerData.PlayerFightEnd(true);
                 return true;
             }
 
-            PlayerData.PlayerLost();
+            currDungeon.ResetEnemyHP();
+            PlayerData.PlayerFightEnd(false);
             return false;
         }
     }

@@ -28,5 +28,24 @@
                 Utilities.PrintEntityBasic(enemy);
             }
         }
+
+        public void ResetEnemyHP()
+        {
+            foreach (Enemy enemy in Enemies)
+            {
+                enemy.ResetHP();
+            }
+
+            EnemiesAlive = Constants.PlayerSquadSize;
+        }
+
+        public void LevelUpEnemies(int levels)
+        {
+            foreach (Enemy enemy in Enemies)
+            {
+                enemy.LevelUp(levels, false);
+                enemy.ResetHP();
+            }
+        }
     }
 }

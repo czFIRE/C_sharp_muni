@@ -18,10 +18,9 @@
             fight,
             info,
             reorder,
-            rip
+            rip,
+            help
         }
-
-        public static string[] KnownCommands = { "inspect", "fight", "info", "reorder", "rip" };
 
         public const int DiamondShards = 7;
         public const int DungeonCount = DiamondShards;
