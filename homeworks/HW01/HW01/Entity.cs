@@ -69,6 +69,7 @@
                 this.Attack += rnd.Next(Constants.MinDMGIncrease, Constants.MaxDMGIncrease + 1);
                 this.MaxHitpoints += rnd.Next(Constants.MinHPIncrease, Constants.MaxHPIncrease + 1);
 
+                // This if is just so that enemies also don't get levelup messages
                 if (print)
                     Utilities.LevelUpMessage(this);
             }

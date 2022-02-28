@@ -5,6 +5,6 @@
      **/
     internal interface IGame
     {
-        public int Run();
+        public int Start();
     }
 }

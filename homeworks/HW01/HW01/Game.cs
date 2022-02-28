@@ -20,17 +20,18 @@
             PlayerData = new Player(Entities.AdventurerList);
         }
 
-        public int Run()
+        public int Start()
         {
 
             Utilities.PrintSupportedCommands();
 
-            // TODO: Fix this loop
-            // Yes, I know that break exists
+            int retval = 0;
+
             while (true)
             {
                 Utilities.InputOutputHandler.WriteLine("");
-                if (ParsePlayerCommand() != 0)
+
+                if ((retval = ParsePlayerCommand()) != 0)
                 {
                     break;
                 }
@@ -43,7 +44,7 @@
                 }
             }
 
-            return 0;
+            return retval;
         }
 
         public int ParsePlayerCommand()

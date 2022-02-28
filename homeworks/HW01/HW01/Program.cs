@@ -2,4 +2,4 @@
 using HW01;
 
 var game = new Game();
-game.Run();
+game.Start();

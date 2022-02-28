@@ -4,7 +4,6 @@
     {
         public static IIOHandler InputOutputHandler { get; set; } = new IOHandler();
 
-        // This should probably take EntityColour instead of Console color
         public static void PrintColouredName(ConsoleColor colour, string name)
         {
             ConsoleColor currentColour = InputOutputHandler.GetForegroundColor();
