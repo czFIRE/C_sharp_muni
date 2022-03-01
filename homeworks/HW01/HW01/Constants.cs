@@ -3,7 +3,7 @@
     /**
      * <summary>Class for "general knowledge" about the game and its constants.</summary>
      **/
-    internal static class Constants
+    public static class Constants
     {
         public enum Colours
         {
@@ -22,27 +22,27 @@
             help
         }
 
-        public const int DiamondShards = 7;
-        public const int DungeonCount = DiamondShards;
+        public static int DiamondShards = 7;
+        public static int DungeonCount = DiamondShards;
 
-        public const int PlayerSquadSize = 3;
-        public const int EnemySquadSize = PlayerSquadSize;
+        public static int PlayerSquadSize = 3;
+        public static int EnemySquadSize = PlayerSquadSize;
 
-        public const int EffectiveAttackModifier = 2;
-        public const int BaseAttackModifier = 1;
+        public static int EffectiveAttackModifier = 2;
+        public static int BaseAttackModifier = 1;
 
-        public const float LossPenalty = 0.5f;
+        public static float LossPenalty = 0.5f;
 
-        public const int MinDMGIncrease = 1;
-        public const int MaxDMGIncrease = 3;
+        public static int MinDMGIncrease = 1;
+        public static int MaxDMGIncrease = 3;
 
-        public const int MinHPIncrease = 1;
-        public const int MaxHPIncrease = 4;
+        public static int MinHPIncrease = 1;
+        public static int MaxHPIncrease = 4;
 
-        public const int LevelUpThreshold = 100;
+        public static int LevelUpThreshold = 100;
 
-        public const int MinExpReward = 50;
-        public const int MaxExpReward = 150;
+        public static int MinExpReward = 50;
+        public static int MaxExpReward = 150;
 
         public static int EffectiveAttack(Colours attacking, Colours attacked)
         {

@@ -1,6 +1,6 @@
 ﻿namespace HW01
 {
-    internal class Adventurer : Entity
+    public class Adventurer : Entity
     {
         public Adventurer((string, int, int, int, Constants.Colours) p) : base(p)
         {

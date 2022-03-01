@@ -1,6 +1,6 @@
 ﻿namespace HW01
 {
-    internal class Enemy : Entity
+    public class Enemy : Entity
     {
         public Enemy((string, int, int, int, Constants.Colours) p) : base(p)
         {

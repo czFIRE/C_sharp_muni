@@ -3,9 +3,9 @@
     /**
     * <summary>Contains general player information</summary>
     **/
-    internal class Player
+    public class Player
     {
-        public Adventurer[] Adventurers { get; private set; }
+        public Adventurer[] Adventurers { get; set; }
         public int DiamondPieces { get; set; } = 0;
         public int DungeonNumber { get; set; } = 0;
 
@@ -13,7 +13,22 @@
 
         public Player((string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour)[] AdventurerList)
         {
-            Adventurers = PickPlayerAdventurers(AdventurerList);
+            if (AdventurerList != null)
+            {
+                Adventurers = PickPlayerAdventurers(AdventurerList);
+            } else
+            {
+                Adventurers = new Adventurer[Constants.PlayerSquadSize];
+            }
+            
+        }
+
+        public void SetAdventurers((string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour)[] AdventurerList)
+        {
+            for (int i = 0; i < Constants.PlayerSquadSize; i++)
+            {
+                Adventurers[i] = new Adventurer(AdventurerList[i]);
+            }
         }
 
         public void PlayerFightEnd(bool won)

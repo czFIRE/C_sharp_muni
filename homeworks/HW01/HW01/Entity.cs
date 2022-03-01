@@ -1,13 +1,13 @@
 ﻿namespace HW01
 {
-    internal class Entity
+    public class Entity
     {
         public string Name { get; }
-        public int Attack { get; protected set; }
+        public int Attack { get;  set; }
         public int Hitpoints { get; set; }
         protected int MaxHitpoints { get; set; }
-        public int Speed { get; }
-        public Constants.Colours Colour { get; }
+        public int Speed { get; set; }
+        public Constants.Colours Colour { get; set; }
 
         public int Experience = 0;
         public int Level = 1;

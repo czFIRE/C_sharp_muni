@@ -3,7 +3,7 @@
     /**
      * <summary> Class storing all the possible entities. </summary>
      **/
-    internal static class Entities
+    public static class Entities
     {
         // Yes, this should be done as a input from a file
         // No, I am not doing it, I am lazy :D

@@ -1,23 +1,31 @@
 ﻿namespace HW01
 {
-    internal class Game : IGame
+    public class Game : IGame
     {
         public Player PlayerData { get; set; }
 
         public Dungeon[] Dungeons { get; set; }
 
-        public Game()
+        public Game() : this(Entities.AdventurerList, Entities.EnemyList)
+        {
+        }
+
+        public Game((string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour)[] adventurers,
+                    (string Name, int Attack, int Hitpoints, int Speed, Constants.Colours Colour)[] enemies)
         {
             // an argument could be made that it should be generated on the fly and not in advance
             Dungeons = new Dungeon[Constants.DungeonCount];
-            Random rnd = new Random();
-            for (int i = 0; i < Dungeons.Length; i++)
+            if (enemies != null)
             {
-                Dungeons[i] = new Dungeon(Entities.EnemyList.OrderBy(x => rnd.Next()).Take(Constants.EnemySquadSize).ToArray());
-                Dungeons[i].LevelUpEnemies(i);
+                Random rnd = new Random();
+                for (int i = 0; i < Constants.DungeonCount; i++)
+                {
+                    Dungeons[i] = new Dungeon(enemies.OrderBy(x => rnd.Next()).Take(Constants.EnemySquadSize).ToArray());
+                    Dungeons[i].LevelUpEnemies(i);
+                }
             }
 
-            PlayerData = new Player(Entities.AdventurerList);
+            PlayerData = new Player(adventurers);
         }
 
         public int Start()
@@ -47,16 +55,20 @@
             return retval;
         }
 
-        public int ParsePlayerCommand()
+        public int ParsePlayerCommand(bool read = true, Constants.Commands cmd = Constants.Commands.rip)
         {
-            var command = Utilities.InputOutputHandler.ReadLine();
-
-            Utilities.InputOutputHandler.WriteLine("");
-
-            if (!Enum.TryParse(command, out Constants.Commands cmd))
+            
+            if (read)
             {
-                Utilities.PrintIncorectCommandError(command);
-                return 0;
+                var command = Utilities.InputOutputHandler.ReadLine();
+
+                Utilities.InputOutputHandler.WriteLine("");
+
+                if (!Enum.TryParse(command, out cmd))
+                {
+                    Utilities.PrintIncorectCommandError(command);
+                    return 0;
+                }
             }
 
             switch (cmd)

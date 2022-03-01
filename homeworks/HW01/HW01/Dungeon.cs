@@ -1,8 +1,8 @@
 ﻿namespace HW01
 {
-    internal class Dungeon
+    public class Dungeon
     {
-        public Enemy[] Enemies { get; private set; }
+        public Enemy[] Enemies { get; set; }
 
         public int EnemiesAlive { get; set; } = Constants.EnemySquadSize;
 
