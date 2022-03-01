@@ -60,6 +60,7 @@ namespace UnitTests
             {
                 Assert.True(game.PlayerData.Adventurers[i].Attack > Entities.AdventurerList[i].Attack);
                 Assert.True(game.PlayerData.Adventurers[i].Hitpoints > Entities.AdventurerList[i].Hitpoints);
+                Assert.True(game.PlayerData.Adventurers[i].Level > 1);
             }
 
             Assert.True(game.PlayerData.DiamondPieces == 1);
