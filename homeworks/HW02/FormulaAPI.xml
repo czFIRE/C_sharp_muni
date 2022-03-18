@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FormulaAPI</name>
+    </assembly>
+    <members>
+        <member name="M:FormulaAPI.F1.GetResults(System.Int32,System.Int32)">
+            <summary>
+            Gets a list of results.
+            </summary>
+            <param name="limit">The number of results that are returned</param>
+            <param name="offset">The offset of results</param>
+            <exception cref="T:System.ArgumentException">Limit can be specified only up to a maximum value of 1000</exception>
+            <returns>A list of results</returns>
+        </member>
+        <member name="M:FormulaAPI.F1.GetStatus(System.Int32)">
+            <summary>
+            Gets a specific status based on its id.
+            </summary>
+            <param name="id">The id of status</param>
+            <returns>A status with the given id</returns>
+        </member>
+        <member name="M:FormulaAPI.F1.GetStatuses(System.Int32,System.Int32)">
+            <summary>
+            Gets a list of statuses.
+            </summary>
+            <param name="limit">The number of results that are returned</param>
+            <param name="offset">The offset of results</param>
+            <exception cref="T:System.ArgumentException">Limit can be specified only up to a maximum value of 1000</exception>
+            <returns>A list of statuses</returns>
+        </member>
+        <member name="M:FormulaAPI.F1.GetDrivers(System.Int32,System.Int32)">
+            <summary>
+            Gets a list of drivers.
+            </summary>
+            <param name="limit">The number of results that are returned</param>
+            <param name="offset">The offset of results</param>
+            <exception cref="T:System.ArgumentException">Limit can be specified only up to a maximum value of 1000</exception>
+            <returns>A list of drivers</returns>
+        </member>
+    </members>
+</doc>
