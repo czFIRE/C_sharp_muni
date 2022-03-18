@@ -9,5 +9,9 @@
         public static int MIN_RESULTS = 10;
 
         public static int LIMIT = 1000;
+
+        public static int SUCCESS = 0;
+        public static int ERROR_UNSUPPORTED = 1;
+        public static int ERROR_NULL = 2;
     }
 }

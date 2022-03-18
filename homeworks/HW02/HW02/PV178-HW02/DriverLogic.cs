@@ -12,7 +12,6 @@
 
             if (driverID == -1)
             {
-                Console.Error.WriteLine("A driver of a given name doesn't exist!");
                 return null;
             } 
 

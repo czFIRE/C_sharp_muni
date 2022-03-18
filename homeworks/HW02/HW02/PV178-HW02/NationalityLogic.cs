@@ -5,10 +5,15 @@
         public static List<(int, string)> GetNationalityFailures(string nationality, List<int> rejectedStatuses)
         {
 
-            // First find all drivers of a nationality
+            // First find all drivers of a nationality and their relevant results
+            List<NationalityDriver> nationalityDrivers = FindDrivers(nationality);
 
-            // Default value, ID is non zero
-            List<NationalityDriver> nationalityDrivers = FindResults(FindDrivers(nationality), rejectedStatuses);
+            if (nationalityDrivers == null || nationalityDrivers.Count() == 0)
+            {
+                return null;
+            }
+
+            _ = FindResults(nationalityDrivers, rejectedStatuses);
 
             // Get all results
             List<(int, string)> failures = new List<(int, string)>();
@@ -71,6 +76,9 @@
                             {
                                 driver.relevantResults.Add(status.Name);
                             }
+
+                            // optimizition since we know, it won't match multiple times
+                            break;
                         }
                     }
                 }
