@@ -24,8 +24,8 @@ namespace HW02.Export
 
             foreach (var record in collection)
             {
-                var caseID = "";   // update this based on your collection
-                var activity = ""; // update this based on your collection
+                var caseID = 1;   // update this based on your collection
+                var activity = record; // update this based on your collection
                 sr.WriteLine($"{caseID};{activity}");
             }
         }
