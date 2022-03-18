@@ -22,10 +22,10 @@ namespace HW02.Export
 
             sr.WriteLine("id;activity");
 
-            foreach (var record in collection)
+            foreach ((int, string) record in collection)
             {
-                var caseID = 1;   // update this based on your collection
-                var activity = record; // update this based on your collection
+                var caseID = record.Item1;   // update this based on your collection
+                var activity = record.Item2; // update this based on your collection
                 sr.WriteLine($"{caseID};{activity}");
             }
         }

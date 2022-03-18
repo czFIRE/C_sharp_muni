@@ -1,5 +1,4 @@
-﻿using HW02;
-using HW02.Export;
+﻿using HW02.Export;
 using HW02.Modelling;
 
 namespace HW02
@@ -38,6 +37,9 @@ namespace HW02
             CsvExporter.Export("test.csv", failures);
             ModelGenerator.RunProcessMining("test.csv");
             ;
+            var failures2 = NationalityLogic.GetNationalityFailures("Russian", rejectedStatuses);
+            CsvExporter.Export("test1.csv", failures2);
+            ModelGenerator.RunProcessMining("test1.csv");
 
         }
     }

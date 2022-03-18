@@ -2,14 +2,28 @@
 {
     internal static class DriverLogic
     {
-        public static List<String> GetDriverFailures(string forename, string surname, List<int> rejectedStatuses)
+        // Yes, we could use the NationalityDriver class here
+        // No it doesn't make sense for me to use it just for a single value
+        public static List<(int, string)> GetDriverFailures(string forename, string surname, List<int> rejectedStatuses)
         {
-            List<String> failures = new List<String>();
-
             // First find driver ID
 
-            // Default value, ID is non zero
-            int driverID = 0;
+            int driverID = FindDriverID(forename, surname);
+
+            if (driverID == -1)
+            {
+                Console.Error.WriteLine("A driver of a given name doesn't exist!");
+                return null;
+            } 
+
+            // Get all results
+            return FindRelevantResults(driverID, rejectedStatuses);
+        }
+
+        private static int FindDriverID(string forename, string surname)
+        {
+            // Default value, ID is non negative
+            int driverID = -1;
             int driverOffset = 0;
             List<FormulaAPI.Entities.Driver> drivers;
 
@@ -25,11 +39,16 @@
                 }
                 driverOffset += Constants.LIMIT;
             }
+            
+            return driverID;
+        }
 
-            // Get all results
-
+        private static List<(int, string)> FindRelevantResults(int driverID, List<int> rejectedStatuses)
+        {
             int resultOffset = 0;
+            List<(int, string)> failures = new List<(int, string)>();
             List<FormulaAPI.Entities.Result> results;
+
             while ((results = FormulaAPI.F1.GetResults(Constants.LIMIT, resultOffset)).Count() != 0)
             {
                 foreach (FormulaAPI.Entities.Result result in results)
@@ -41,8 +60,8 @@
                         // Go through all rejected statuses
                         if (!rejectedStatuses.Contains(status.Id))
                         {
-                            failures.Add(status.Name);
-                        } 
+                            failures.Add((driverID, status.Name));
+                        }
                     }
                 }
                 resultOffset += Constants.LIMIT;
