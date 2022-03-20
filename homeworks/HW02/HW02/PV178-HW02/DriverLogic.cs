@@ -30,7 +30,7 @@
             {
                 foreach (FormulaAPI.Entities.Driver driver in drivers)
                 {
-                    if (driver.Forename == forename && driver.Surname == surname)
+                    if (driver.Forename.ToLower() == forename && driver.Surname.ToLower() == surname)
                     {
                         driverID = driver.Id;
                         break;

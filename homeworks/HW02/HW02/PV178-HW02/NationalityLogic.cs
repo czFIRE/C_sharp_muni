@@ -42,7 +42,7 @@
             {
                 foreach (FormulaAPI.Entities.Driver driver in drivers)
                 {
-                    if (driver.Nationality == nationality)
+                    if (driver.Nationality.ToLower() == nationality)
                     {
                         // All drivers have unique ID
                         nationalityDrivers.Add(new NationalityDriver(driver.Id));

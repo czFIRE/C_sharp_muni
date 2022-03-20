@@ -64,13 +64,15 @@ namespace HW02
             Console.WriteLine("Please specify file name to which you want to save the data:");
             string filename = Console.ReadLine();
             
-            if (filename == null)
+            // This is done only because the provided library can't work with whitespaces in path
+            // Have fun if you have whitespace in file path 
+            if (filename == null || filename.Any(Char.IsWhiteSpace))
             {
-                Console.Error.WriteLine("Filename is null");
+                Console.Error.WriteLine("Filename is null or contains whitespaces");
                 return Constants.ERROR_NULL;
             }
 
-            if (!filename.Contains(".csv"))
+            if (!filename.EndsWith(".csv"))
             {
                 filename += ".csv";
             }
@@ -94,7 +96,7 @@ namespace HW02
                 return Constants.ERROR_NULL;
             }
 
-            var failures = DriverLogic.GetDriverFailures(forename, surname, rejectedStatuses);
+            var failures = DriverLogic.GetDriverFailures(forename.ToLower(), surname.ToLower(), rejectedStatuses);
 
             if (failures == null || failures.Count == 0)
             {
@@ -116,7 +118,7 @@ namespace HW02
                 return Constants.ERROR_NULL;
             }
 
-            var failures = NationalityLogic.GetNationalityFailures(nationality, rejectedStatuses);
+            var failures = NationalityLogic.GetNationalityFailures(nationality.ToLower(), rejectedStatuses);
 
             if (failures == null || failures.Count == 0)
             {
