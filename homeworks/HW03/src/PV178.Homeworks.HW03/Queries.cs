@@ -17,8 +17,14 @@ namespace PV178.Homeworks.HW03
         /// <returns>The query result</returns>
         public int AttacksAtoGCountriesMaleBetweenFifteenAndFortyQuery()
         {
-            // TODO...
-            throw new NotImplementedException();
+            var IDsWithPersons = DataContext.AttackedPeople.Where(person => person.Age >= 15 && person.Age <= 40 && person.Sex == Sex.Male).Select(x => x.Id).ToHashSet();
+
+            var IDsWithCountryName = DataContext.Countries.Where(country => country.Name.FirstOrDefault('\0') >= 'A'
+                                                                         && country.Name.FirstOrDefault('\0') <= 'G').Select(x => x.Id).ToHashSet();
+
+            var result = DataContext.SharkAttacks.Count(attack => (attack.CountryId != null ? IDsWithCountryName.Contains((int)attack.CountryId) : false)
+                                                               && (attack.AttackedPersonId != null ? IDsWithPersons.Contains((int)attack.AttackedPersonId) : false));
+            return result;
         }
 
         /// <summary>
@@ -30,8 +36,21 @@ namespace PV178.Homeworks.HW03
         /// <returns>The query result</returns>
         public List<string> InfoAboutPeopleWithUnknownNamesAndWasInBahamasQuery()
         {
-            // TODO...
-            throw new NotImplementedException();
+            int BahamasID = DataContext.Countries.Where(country => country.Name == "Bahamas").FirstOrDefault().Id;
+
+            var IDsAttackedOnBahamas = DataContext.SharkAttacks.Where(attack => attack.CountryId == BahamasID)
+                                       .Select(attack => new { attack.AttackedPersonId, attack.SharkSpeciesId });
+
+            // get person names
+            var joinedNames = DataContext.AttackedPeople.Where(person => person.Name == String.Empty || !Char.IsUpper(person.Name, 0))
+                                                        .Join(IDsAttackedOnBahamas, tmp1 => tmp1.Id, tmp2 => tmp2.AttackedPersonId,
+                                                             (tmp1, tmp2) => new { tmp1.Name, tmp2.SharkSpeciesId });
+
+            // get shark names
+            var joinedSharks = joinedNames.Join(DataContext.SharkSpecies.Where(shark => shark.LatinName != null), tmp1 => tmp1.SharkSpeciesId, tmp2 => tmp2.Id,
+                                                (tmp1, tmp2) => (tmp1.Name + " was attacked in Bahamas by " + tmp2.LatinName));
+
+            return joinedSharks.ToList();
         }
 
         /// <summary>
@@ -42,8 +61,17 @@ namespace PV178.Homeworks.HW03
         /// <returns>The query result</returns>
         public List<string> FiveCountriesWithTopNumberOfAttackSharksLongerThanThreeMetersQuery()
         {
-            // TODO...
-            throw new NotImplementedException();
+            var validSharkIDs = DataContext.SharkSpecies.Where(shark => shark.Length > 3).Select(shark => shark.Id);
+
+            // vybrat všechny útoky relevantních žraloků v útocích (join)
+            var countryIDs = DataContext.SharkAttacks.Where(attack => attack.CountryId != null && validSharkIDs.Contains(attack.SharkSpeciesId))
+                                                     .GroupBy(attack => attack.CountryId)
+                                                     .Select(attack => new { CountryID = attack.Key, Count = attack.Count() }).OrderByDescending(tmp => tmp.Count)
+                                                     .Select(tmp => tmp.CountryID).Take(5);
+
+            var names = DataContext.Countries.Join(countryIDs, tmp1 => tmp1.Id, tmp2 => tmp2.Value, (tmp1, tmp2) => tmp1.Name);
+
+            return names.ToList();
         }
 
         /// <summary>
@@ -54,8 +82,25 @@ namespace PV178.Homeworks.HW03
         /// <returns>The query result</returns>
         public bool AreAllLongSharksGenderIgnoringQuery()
         {
-            // TODO...
-            throw new NotImplementedException();
+            // vyber relevantní žraloky
+            var validSharkIDs = DataContext.SharkSpecies.Where(shark => shark.Length > 2).Select(shark => shark.Id);
+
+            // joini je s útoky
+            // for each ID in sharkIDS:
+            //    get all attacks of this sharks
+            //    convert them to genders
+            //    any women, any men
+
+            var sharkIDPersonSex = DataContext.SharkAttacks.Where(attack => attack.AttackedPersonId != null && validSharkIDs.Contains(attack.SharkSpeciesId))
+                                                          .Join(DataContext.AttackedPeople, attack => attack.AttackedPersonId, person => person.Id,
+                                                                (attack, person) => new { attack.SharkSpeciesId, person.Sex });
+
+            var smth = sharkIDPersonSex.GroupBy(attack => attack.SharkSpeciesId)
+                                       .Select(tmp => new { id = tmp.Key, ignore = tmp.Any(tmp1 => tmp1.Sex == Sex.Male) && tmp.Any(tmp1 => tmp1.Sex == Sex.Female) })
+                                       .All(tmp => tmp.ignore);
+
+            // pro každého relevantního žraloku zjisti to, zda existuje útok na ženu a muže (tedy pomocná funkce s tím, že tohle vybereš) => využít ALL
+            return smth;
         }
 
         /// <summary>
@@ -67,8 +112,21 @@ namespace PV178.Homeworks.HW03
         /// <returns>The query result</returns>
         public Dictionary<string, string> SharksWithoutNickNameAndCountryWithMostAttacksQuery()
         {
-            // TODO...
-            throw new NotImplementedException();
+            var relevantSharks = DataContext.SharkSpecies.Where(shark => shark.AlsoKnownAs == String.Empty && shark.Name != String.Empty)
+                                                         .Select(shark => new { shark.Id, shark.Name });
+
+            var sharkCountryID = DataContext.SharkAttacks.Where(attack => attack.CountryId != null)
+                                                         .Join(relevantSharks, attack => attack.SharkSpeciesId, shark => shark.Id, 
+                                                                (attack, shark) => new {attack.CountryId, shark.Name});
+
+            var sharkCountryIDTop = sharkCountryID.GroupBy(tmp => tmp.Name).Select(tmp => new {sharkName = tmp.Key, 
+                                                countryID = tmp.ToList().GroupBy(tmp1 => tmp1.CountryId).Select(tmp1 => new { id = tmp1.Key, count = tmp1.Count()})
+                                                .OrderByDescending(tmp1 => tmp1.count).Select(tmp1 => tmp1.id).FirstOrDefault()});
+            
+            var sharkCountryName = sharkCountryIDTop.Join(DataContext.Countries.Where(country => country.Name != null), tmp1 => tmp1.countryID, tmp2 => tmp2.Id, 
+                                                         (shark, country) => new {shark.sharkName, country.Name});
+
+            return sharkCountryName.ToDictionary(key => key.sharkName, el => el.Name);
         }
 
         /// <summary>
@@ -80,8 +138,22 @@ namespace PV178.Homeworks.HW03
         /// <returns>The query result</returns>
         public List<string> InfoAboutPeopleAndCountriesOnDorEAndFatalAttacksQuery()
         {
-            // TODO...
-            throw new NotImplementedException();
+            var relevantStateIDs = DataContext.Countries.Where(country => country.Name != String.Empty && (country.Name.First() == 'E' || country.Name.First() == 'D'))
+                                                        .Select(country => new { country.Id, country.Name });
+
+            var tmpQuerry = DataContext.SharkAttacks.Where(attack => attack.AttackSeverenity == AttackSeverenity.Fatal && attack.CountryId != null && attack.AttackedPersonId != null)
+                                                    .Join(relevantStateIDs, tmp1 => tmp1.CountryId, tmp2 => tmp2.Id, 
+                                                    (attack, country) => new {attack.AttackedPersonId, CountryName = country.Name, attack.SharkSpeciesId});
+
+            var personTmpQuerry = DataContext.AttackedPeople.Where(person => person.Name != String.Empty && Char.IsUpper(person.Name.FirstOrDefault()))
+                                                            .Join(tmpQuerry, tmp1 => tmp1.Id, tmp2 => tmp2.AttackedPersonId,
+                                                            (person, querry) => new { person.Name, querry.CountryName, querry.SharkSpeciesId });
+
+            var sharkTmpQuerry = DataContext.SharkSpecies.Where(shark => shark.LatinName != String.Empty).Join(personTmpQuerry, tmp1 => tmp1.Id, tmp2 => tmp2.SharkSpeciesId,
+                                                          (shark, querry) => querry.Name + " was attacked in " + querry.CountryName
+                                                                             + " by " + shark.LatinName);
+
+            return sharkTmpQuerry.OrderBy(name => name).Take(5).ToList();
         }
 
         /// <summary>
@@ -97,8 +169,27 @@ namespace PV178.Homeworks.HW03
         /// <returns>The query result</returns>
         public List<string> InfoAboutFinesOfAfricanCountriesTopFiveQuery()
         {
-            // TODO...
-            throw new NotImplementedException();
+            var relevantStates = DataContext.Countries.Where(country => country.Continent == "Africa" && country.Name != String.Empty && country.CurrencyCode != String.Empty)
+                                                      .Select(country => new {country.Id, country.Name, country.CurrencyCode});
+
+
+            var smth = DataContext.SharkAttacks.Where(attack => attack.AttackSeverenity != null).Join(relevantStates, tmp1 => tmp1.CountryId, tmp2 => tmp2.Id, 
+                                                    (attack, country) => new {country.Name, feeValue = SeverityToFee(attack.AttackSeverenity), country.CurrencyCode});
+
+            var summedFees = smth.GroupBy(tmp => new { tmp.Name, tmp.CurrencyCode }).Select(tmp => new { tmp.Key.Name, Sum = tmp.Sum(tmp1 => tmp1.feeValue), tmp.Key.CurrencyCode})
+                                 .OrderByDescending(tmp => tmp.Sum).Take(5).Select(tmp => tmp.Name + ": " + tmp.Sum + " " + tmp.CurrencyCode);
+
+            return summedFees.ToList();
+        }
+
+        private int SeverityToFee(AttackSeverenity? severenity)
+        {
+            return severenity switch
+            {
+                AttackSeverenity.Fatal => 300,
+                AttackSeverenity.NonFatal => 250,
+                _ => 0,
+            };
         }
 
         /// <summary>

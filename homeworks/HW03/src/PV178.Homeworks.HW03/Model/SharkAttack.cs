@@ -1,5 +1,4 @@
-﻿using System;
-using PV178.Homeworks.HW03.Model.Enums;
+﻿using PV178.Homeworks.HW03.Model.Enums;
 
 namespace PV178.Homeworks.HW03.Model
 {
@@ -50,7 +49,7 @@ namespace PV178.Homeworks.HW03.Model
 
         /// <summary>
         /// Activity of the involved person
-        /// (what person was doeing when the attack occured)
+        /// (what person was doing when the attack occured)
         /// </summary>
         public string? Activity { get; set; }
 
@@ -60,7 +59,7 @@ namespace PV178.Homeworks.HW03.Model
         public string? Injury { get; set; }
 
         /// <summary>
-        /// Severenity of the attack (if person has survived)
+        /// Severenity of the attack (if the person has survived)
         /// </summary>
         public AttackSeverenity? AttackSeverenity { get; set; }
 

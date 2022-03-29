@@ -1,5 +1,5 @@
-﻿using System.Globalization;
-using PV178.Homeworks.HW03.Model.Enums;
+﻿using PV178.Homeworks.HW03.Model.Enums;
+using System.Globalization;
 
 namespace PV178.Homeworks.HW03.Model
 {

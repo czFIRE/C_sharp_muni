@@ -1,8 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using System.Globalization;
-using CsvHelper;
+﻿using CsvHelper;
 using PV178.Homeworks.HW03.DataLoading.Mappers;
 using PV178.Homeworks.HW03.Model;
+using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace PV178.Homeworks.HW03.DataLoading.DataImporter
 {
