@@ -202,8 +202,15 @@ namespace PV178.Homeworks.HW03
         /// <returns>The query result</returns>
         public string GovernmentTypePercentagesQuery()
         {
-            // TODO...
-            throw new NotImplementedException();
+            // Upřímně asi nevidím, jak bych zde měl využít tu agregační funkci (aggregate alias foldl)?
+            // Asi abych to udělal na jeden průchod, ale myslím si, že zrovna zjištění počtu prvků by mohla být efektivní operace
+
+            float totalGoverments = DataContext.Countries.Count();
+
+            var smth = DataContext.Countries.GroupBy(country => country.GovernmentForm).Select(tmp => new { Form = tmp.Key.ToString(), Perc = 100 * tmp.Count() / totalGoverments })
+                                            .OrderByDescending(tmp => tmp.Perc).Select(tmp => tmp.Form + ": " + tmp.Perc.ToString("0.0") + "%");
+
+            return String.Join(", ", smth);
         }
 
         /// <summary>
@@ -215,8 +222,22 @@ namespace PV178.Homeworks.HW03
         /// <returns>The query result</returns>
         public Dictionary<string, Tuple<int, double>> InfoForSurfersByContinentQuery()
         {
-            // TODO...
-            throw new NotImplementedException();
+            var attacks = DataContext.SharkAttacks.Where(attack => attack.AttackSeverenity == AttackSeverenity.Fatal && attack.CountryId != null
+                                                        && attack.Activity != null && attack.Activity.ToLower().Contains("surf") && attack.AttackedPersonId != null)
+                                                  .Select(attack => new { attack.CountryId, attack.AttackedPersonId});
+
+            // Why not exclude people without age???????????????
+            // This should be here :reee: .Where(person => person.Age != null)
+            var personAges = DataContext.AttackedPeople.Join(attacks, tmp1 => tmp1.Id, tmp2 => tmp2.AttackedPersonId, 
+                                                            (person, attack) => new {person.Age, attack.CountryId});
+
+            var continentAge = personAges.Join(DataContext.Countries.Where(country => country.Continent != null), tmp1 => tmp1.CountryId, tmp2 => tmp2.Id,
+                                               (peAg, country) => new {country.Continent, peAg.Age});
+
+            var together_hellmo = continentAge.GroupBy(tmp => tmp.Continent).Select(tmp => new { Continent = tmp.Key, Count = tmp.Count(), Avg = tmp.Average(x => x.Age)})
+                                  .ToDictionary(x => x.Continent, x => new Tuple<int, double> (x.Count, Math.Round((double) x.Avg, 2)));
+
+            return together_hellmo;
         }
 
         /// <summary>
