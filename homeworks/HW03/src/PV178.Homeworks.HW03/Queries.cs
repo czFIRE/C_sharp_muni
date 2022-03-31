@@ -63,7 +63,6 @@ namespace PV178.Homeworks.HW03
         {
             var validSharkIDs = DataContext.SharkSpecies.Where(shark => shark.Length > 3).Select(shark => shark.Id);
 
-            // vybrat všechny útoky relevantních žraloků v útocích (join)
             var countryIDs = DataContext.SharkAttacks.Where(attack => attack.CountryId != null && validSharkIDs.Contains(attack.SharkSpeciesId))
                                                      .GroupBy(attack => attack.CountryId)
                                                      .Select(attack => new { CountryID = attack.Key, Count = attack.Count() }).OrderByDescending(tmp => tmp.Count)
@@ -82,10 +81,9 @@ namespace PV178.Homeworks.HW03
         /// <returns>The query result</returns>
         public bool AreAllLongSharksGenderIgnoringQuery()
         {
-            // vyber relevantní žraloky
             var validSharkIDs = DataContext.SharkSpecies.Where(shark => shark.Length > 2).Select(shark => shark.Id);
 
-
+            // This could be sped up by using join istead of contains => but joins were used later
             var sharkIDPersonSex = DataContext.SharkAttacks.Where(attack => attack.AttackedPersonId != null && validSharkIDs.Contains(attack.SharkSpeciesId))
                                                           .Join(DataContext.AttackedPeople, attack => attack.AttackedPersonId, person => person.Id,
                                                                 (attack, person) => new { attack.SharkSpeciesId, person.Sex });
@@ -94,7 +92,6 @@ namespace PV178.Homeworks.HW03
                                        .Select(tmp => new { id = tmp.Key, ignore = tmp.Any(tmp1 => tmp1.Sex == Sex.Male) && tmp.Any(tmp1 => tmp1.Sex == Sex.Female) })
                                        .All(tmp => tmp.ignore);
 
-            // pro každého relevantního žraloku zjisti to, zda existuje útok na ženu a muže (tedy pomocná funkce s tím, že tohle vybereš) => využít ALL
             return smth;
         }
 
@@ -111,15 +108,18 @@ namespace PV178.Homeworks.HW03
                                                          .Select(shark => new { shark.Id, shark.Name });
 
             var sharkCountryID = DataContext.SharkAttacks.Where(attack => attack.CountryId != null)
-                                                         .Join(relevantSharks, attack => attack.SharkSpeciesId, shark => shark.Id, 
-                                                                (attack, shark) => new {attack.CountryId, shark.Name});
+                                                         .Join(relevantSharks, attack => attack.SharkSpeciesId, shark => shark.Id,
+                                                                (attack, shark) => new { attack.CountryId, shark.Name });
 
-            var sharkCountryIDTop = sharkCountryID.GroupBy(tmp => tmp.Name).Select(tmp => new {sharkName = tmp.Key, 
-                                                countryID = tmp.ToList().GroupBy(tmp1 => tmp1.CountryId).Select(tmp1 => new { id = tmp1.Key, count = tmp1.Count()})
-                                                .OrderByDescending(tmp1 => tmp1.count).Select(tmp1 => tmp1.id).FirstOrDefault()});
-            
-            var sharkCountryName = sharkCountryIDTop.Join(DataContext.Countries.Where(country => country.Name != null), tmp1 => tmp1.countryID, tmp2 => tmp2.Id, 
-                                                         (shark, country) => new {shark.sharkName, country.Name});
+            var sharkCountryIDTop = sharkCountryID.GroupBy(tmp => tmp.Name).Select(tmp => new
+            {
+                sharkName = tmp.Key,
+                countryID = tmp.ToList().GroupBy(tmp1 => tmp1.CountryId).Select(tmp1 => new { id = tmp1.Key, count = tmp1.Count() })
+                                                .OrderByDescending(tmp1 => tmp1.count).Select(tmp1 => tmp1.id).FirstOrDefault()
+            });
+
+            var sharkCountryName = sharkCountryIDTop.Join(DataContext.Countries.Where(country => country.Name != null), tmp1 => tmp1.countryID, tmp2 => tmp2.Id,
+                                                         (shark, country) => new { shark.sharkName, country.Name });
 
             return sharkCountryName.ToDictionary(key => key.sharkName, el => el.Name);
         }
@@ -137,8 +137,8 @@ namespace PV178.Homeworks.HW03
                                                         .Select(country => new { country.Id, country.Name });
 
             var tmpQuerry = DataContext.SharkAttacks.Where(attack => attack.AttackSeverenity == AttackSeverenity.Fatal && attack.CountryId != null && attack.AttackedPersonId != null)
-                                                    .Join(relevantStateIDs, tmp1 => tmp1.CountryId, tmp2 => tmp2.Id, 
-                                                    (attack, country) => new {attack.AttackedPersonId, CountryName = country.Name, attack.SharkSpeciesId});
+                                                    .Join(relevantStateIDs, tmp1 => tmp1.CountryId, tmp2 => tmp2.Id,
+                                                    (attack, country) => new { attack.AttackedPersonId, CountryName = country.Name, attack.SharkSpeciesId });
 
             var personTmpQuerry = DataContext.AttackedPeople.Where(person => person.Name != String.Empty && Char.IsUpper(person.Name.FirstOrDefault()))
                                                             .Join(tmpQuerry, tmp1 => tmp1.Id, tmp2 => tmp2.AttackedPersonId,
@@ -165,13 +165,13 @@ namespace PV178.Homeworks.HW03
         public List<string> InfoAboutFinesOfAfricanCountriesTopFiveQuery()
         {
             var relevantStates = DataContext.Countries.Where(country => country.Continent == "Africa" && country.Name != String.Empty && country.CurrencyCode != String.Empty)
-                                                      .Select(country => new {country.Id, country.Name, country.CurrencyCode});
+                                                      .Select(country => new { country.Id, country.Name, country.CurrencyCode });
 
 
-            var smth = DataContext.SharkAttacks.Where(attack => attack.AttackSeverenity != null).Join(relevantStates, tmp1 => tmp1.CountryId, tmp2 => tmp2.Id, 
-                                                    (attack, country) => new {country.Name, feeValue = SeverityToFee(attack.AttackSeverenity), country.CurrencyCode});
+            var nameFeeCurrencyCode = DataContext.SharkAttacks.Where(attack => attack.AttackSeverenity != null).Join(relevantStates, tmp1 => tmp1.CountryId, tmp2 => tmp2.Id,
+                                                    (attack, country) => new { country.Name, feeValue = SeverityToFee(attack.AttackSeverenity), country.CurrencyCode });
 
-            var summedFees = smth.GroupBy(tmp => new { tmp.Name, tmp.CurrencyCode }).Select(tmp => new { tmp.Key.Name, Sum = tmp.Sum(tmp1 => tmp1.feeValue), tmp.Key.CurrencyCode})
+            var summedFees = nameFeeCurrencyCode.GroupBy(tmp => new { tmp.Name, tmp.CurrencyCode }).Select(tmp => new { tmp.Key.Name, Sum = tmp.Sum(tmp1 => tmp1.feeValue), tmp.Key.CurrencyCode })
                                  .OrderByDescending(tmp => tmp.Sum).Take(5).Select(tmp => tmp.Name + ": " + tmp.Sum + " " + tmp.CurrencyCode);
 
             return summedFees.ToList();
@@ -197,16 +197,16 @@ namespace PV178.Homeworks.HW03
         /// <returns>The query result</returns>
         public string GovernmentTypePercentagesQuery()
         {
-            // Upřímně asi nevidím, jak bych zde měl využít tu agregační funkci (aggregate alias foldl)?
-            // Asi abych to udělal na jeden průchod, ale myslím si, že zrovna zjištění počtu prvků by mohla být efektivní operace
-            // And yes, I know how to use aggregate => FastestVsSlowestSharkQuery
+            // I don't really see why use and aggregate function here (aggregate alias foldl)?
+            // It could be done in one go through the collection, but the operation of collection size should be quick
+            // And yes, I know how to use aggregate function => FastestVsSlowestSharkQuery
 
-            float totalGoverments = DataContext.Countries.Count();
+            float totalGoverments = DataContext.Countries.Count;
 
-            var smth = DataContext.Countries.GroupBy(country => country.GovernmentForm).Select(tmp => new { Form = tmp.Key.ToString(), Perc = 100 * tmp.Count() / totalGoverments })
+            var formPercentage = DataContext.Countries.GroupBy(country => country.GovernmentForm).Select(tmp => new { Form = tmp.Key.ToString(), Perc = 100 * tmp.Count() / totalGoverments })
                                             .OrderByDescending(tmp => tmp.Perc).Select(tmp => tmp.Form + ": " + tmp.Perc.ToString("0.0") + "%");
 
-            return String.Join(", ", smth);
+            return String.Join(", ", formPercentage);
         }
 
         /// <summary>
@@ -220,20 +220,20 @@ namespace PV178.Homeworks.HW03
         {
             var attacks = DataContext.SharkAttacks.Where(attack => attack.AttackSeverenity == AttackSeverenity.Fatal && attack.CountryId != null
                                                         && attack.Activity != null && attack.Activity.ToLower().Contains("surf") && attack.AttackedPersonId != null)
-                                                  .Select(attack => new { attack.CountryId, attack.AttackedPersonId});
+                                                  .Select(attack => new { attack.CountryId, attack.AttackedPersonId });
 
             // Why not exclude people without age???????????????
             // This should be here :reee: .Where(person => person.Age != null)
-            var personAges = DataContext.AttackedPeople.Join(attacks, tmp1 => tmp1.Id, tmp2 => tmp2.AttackedPersonId, 
-                                                            (person, attack) => new {person.Age, attack.CountryId});
+            var personAges = DataContext.AttackedPeople.Join(attacks, tmp1 => tmp1.Id, tmp2 => tmp2.AttackedPersonId,
+                                                            (person, attack) => new { person.Age, attack.CountryId });
 
             var continentAge = personAges.Join(DataContext.Countries.Where(country => country.Continent != null), tmp1 => tmp1.CountryId, tmp2 => tmp2.Id,
-                                               (peAg, country) => new {country.Continent, peAg.Age});
+                                               (peAg, country) => new { country.Continent, peAg.Age });
 
-            var together_hellmo = continentAge.GroupBy(tmp => tmp.Continent).Select(tmp => new { Continent = tmp.Key, Count = tmp.Count(), Avg = tmp.Average(x => x.Age)})
-                                  .ToDictionary(x => x.Continent, x => new ValueTuple<int, double> (x.Count, Math.Round((double) x.Avg, 2)));
+            var together = continentAge.GroupBy(tmp => tmp.Continent).Select(tmp => new { Continent = tmp.Key, Count = tmp.Count(), Avg = tmp.Average(x => x.Age) })
+                                  .ToDictionary(x => x.Continent, x => new ValueTuple<int, double>(x.Count, Math.Round((double)x.Avg, 2)));
 
-            return together_hellmo;
+            return together;
         }
 
         /// <summary>
@@ -251,11 +251,11 @@ namespace PV178.Homeworks.HW03
             var heaviestSharks = DataContext.SharkSpecies.OrderByDescending(shark => shark.Weight).Take(10);
 
 
-            var nebaviMeTo = NACountriesIDs.GroupJoin(DataContext.SharkAttacks, tmp2 => tmp2.Id, tmp1 => tmp1.CountryId, (country, attack) =>
-                                                        new ValueTuple<string, List<SharkSpecies>>( country.Name, attack.Join(heaviestSharks, tmp1 => tmp1.SharkSpeciesId, tmp2 => tmp2.Id, 
-                                                                (att, shark) => shark).Distinct().ToList() ));
+            var result = NACountriesIDs.GroupJoin(DataContext.SharkAttacks, tmp2 => tmp2.Id, tmp1 => tmp1.CountryId, (country, attack) =>
+                                                        new ValueTuple<string, List<SharkSpecies>>(country.Name, attack.Join(heaviestSharks, tmp1 => tmp1.SharkSpeciesId, tmp2 => tmp2.Id,
+                                                                (att, shark) => shark).Distinct().ToList()));
 
-            return nebaviMeTo.ToList();
+            return result.ToList();
         }
 
         /// <summary>
@@ -266,15 +266,15 @@ namespace PV178.Homeworks.HW03
         /// <returns>The query result</returns>
         public List<string> NonFatalAttemptOfWhiteDeathOnPeopleBetweenUAndZQuery()
         {
-            var validPeoples = DataContext.AttackedPeople.Where(person => person.Name.FirstOrDefault('\0') >= 'U' && person.Name.FirstOrDefault('\0') <= 'Z').Select(person => new {person.Name, person.Id});
+            var validPeoples = DataContext.AttackedPeople.Where(person => person.Name.FirstOrDefault('\0') >= 'U' && person.Name.FirstOrDefault('\0') <= 'Z').Select(person => new { person.Name, person.Id });
 
             var sharkWhiteDeathID = DataContext.SharkSpecies.Where(shark => shark.AlsoKnownAs == "White death").Select(shark => shark.Id).FirstOrDefault();
 
-            var smth = DataContext.SharkAttacks.Where(attack => attack.SharkSpeciesId == sharkWhiteDeathID && attack.Type == AttackType.Boating 
+            var temp = DataContext.SharkAttacks.Where(attack => attack.SharkSpeciesId == sharkWhiteDeathID && attack.Type == AttackType.Boating
                                                                 && DateTime.Parse("1960/03/03 00:00:00.000") <= attack.DateTime && attack.AttackedPersonId.HasValue)
                                                .Select(attack => attack.AttackedPersonId);
 
-            var people = validPeoples.Join(smth, tmp1 => tmp1.Id, tmp2 => tmp2.Value, (person, _) => person.Name);
+            var people = validPeoples.Join(temp, tmp1 => tmp1.Id, tmp2 => tmp2.Value, (person, _) => person.Name);
 
             return people.ToList();
         }
@@ -288,25 +288,23 @@ namespace PV178.Homeworks.HW03
         /// <returns>The query result</returns>
         public string FastestVsSlowestSharkQuery()
         {
-            float totalAttacks = DataContext.SharkAttacks.Count();
-
             var orderedSharks = DataContext.SharkSpecies.Where(shark => shark.TopSpeed.HasValue).OrderBy(shark => shark.TopSpeed);
 
             var slowestID = orderedSharks.First().Id;
             var quickestID = orderedSharks.Last().Id;
 
-            var smth = DataContext.SharkAttacks.Aggregate((total: 0, quickest: 0, slowest: 0), (acc, curr) => HelperFunc(acc, curr, slowestID, quickestID), 
+            var occurenceCounts = DataContext.SharkAttacks.Aggregate((total: 0, quickest: 0, slowest: 0), (acc, curr) => HelperFunc(acc, curr, slowestID, quickestID),
                                                         acc => acc);
 
             //acc => (acc.quickest/(float) acc.total).ToString("0.0") + "% vs " + (acc.slowest / (float) acc.total).ToString("0.0") + "%"
 
-            var quickPRC = (smth.quickest / (float)smth.total) * 100;
-            var slowPRC = (smth.slowest / (float)smth.total) * 100;
+            var quickPercentage = (occurenceCounts.quickest / (float)occurenceCounts.total) * 100;
+            var slowPercentage = (occurenceCounts.slowest / (float)occurenceCounts.total) * 100;
 
-            return quickPRC.ToString("0.0") + "% vs " + slowPRC.ToString("0.0") + "%";
+            return quickPercentage.ToString("0.0") + "% vs " + slowPercentage.ToString("0.0") + "%";
         }
 
-        private (int,int,int) HelperFunc ((int total, int quickest, int slowest) acc, SharkAttack attack, int slowestID, int quickestID)
+        private (int, int, int) HelperFunc((int total, int quickest, int slowest) acc, SharkAttack attack, int slowestID, int quickestID)
         {
             acc.total++;
 
@@ -336,8 +334,26 @@ namespace PV178.Homeworks.HW03
         /// <returns>The query result</returns>
         public List<string> AttackedPeopleInBahamasWithoutJoinQuery()
         {
-            // TODO...
-            throw new NotImplementedException();
+            // This is so horribly inefficient I wanna cry, but you asked for this shit
+
+
+            var bahamasID = DataContext.Countries.Where(country => country.Name == "Bahamas").Select(country => country.Id).FirstOrDefault();
+
+            var relevantAttacks = DataContext.SharkAttacks.Where(attack => attack.CountryId == bahamasID && attack.AttackedPersonId.HasValue)
+                                                          .Select(attack => new { attack.AttackedPersonId, attack.SharkSpeciesId });
+
+
+            var relevantPeople = DataContext.AttackedPeople.Where(person => relevantAttacks.Select(x => x.AttackedPersonId).Contains(person.Id))
+                                                           .OrderBy(prs => prs.Id).Select(person => person.Name);
+
+
+            Dictionary<int, string> sharkNameDict = DataContext.SharkSpecies.ToDictionary(x => x.Id, x => x.LatinName);
+
+            var sharks = relevantAttacks.OrderBy(atck => atck.AttackedPersonId).Select(atck => sharkNameDict[atck.SharkSpeciesId]);
+
+            var result = relevantPeople.Zip(sharks, (person, shark) => person + " was attacked by " + shark);
+
+            return result.ToList();
         }
 
         /// <summary>
