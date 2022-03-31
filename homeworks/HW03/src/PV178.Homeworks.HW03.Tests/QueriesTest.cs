@@ -148,14 +148,14 @@ namespace PV178.Homeworks.HW03.Tests
         [TestMethod]
         public void InfoForSurfersByContinentQuery_ReturnsCorrectResult()
         {
-            var expectedResult = new Dictionary<string, Tuple<int, double>>
+            var expectedResult = new Dictionary<string, ValueTuple<int, double>>
             {
-                { "Central America", new Tuple<int, double>(4, 20.25) },
-                { "Australia", new Tuple<int, double>(23, 24.96) },
-                { "Asia", new Tuple<int, double>(2, 58) },
-                { "Africa", new Tuple<int, double>(8, 22.33) },
-                { "Europe", new Tuple<int, double>(1, 47) },
-                { "South America", new Tuple<int, double>(4, 19.67) }
+                { "Central America", new ValueTuple<int, double>(4, 20.25) },
+                { "Australia", new ValueTuple<int, double>(23, 24.96) },
+                { "Asia", new ValueTuple<int, double>(2, 58) },
+                { "Africa", new ValueTuple<int, double>(8, 22.33) },
+                { "Europe", new ValueTuple<int, double>(1, 47) },
+                { "South America", new ValueTuple<int, double>(4, 19.67) }
             };
 
             var result = Queries.InfoForSurfersByContinentQuery();
