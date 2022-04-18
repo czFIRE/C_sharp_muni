@@ -14,7 +14,16 @@
         /// <returns>chunks</returns>
         public static IEnumerable<byte> Split(byte @byte, int size)
         {
-            throw new NotImplementedException();
+            byte mask = (byte) ((1 << size) - 1);
+            // this code didn't work when I used List and append and I have no clue why
+            var res = new byte[BitsInByte / size]; 
+            for (int i = 0; i < BitsInByte / size; i++)
+            {
+                res[i] = (byte)(@byte & mask);
+                @byte >>= size;
+            }
+
+            return res;
         }
 
         /// <summary>
@@ -27,7 +36,16 @@
         /// <returns>byte</returns>
         public static byte Reform(IEnumerable<byte> parts, int size)
         {
-            throw new NotImplementedException();
+            byte res = 0;
+
+            for (int i = (BitsInByte / size) - 1; i >= 0; i--)
+            {
+                // we need to shift for every iteration except the last one
+                res <<= size;
+                res += parts.ElementAt(i);
+            }
+
+            return res;
         }
     }
 }
