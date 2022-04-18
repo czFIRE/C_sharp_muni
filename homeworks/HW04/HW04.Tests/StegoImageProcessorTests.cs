@@ -13,7 +13,8 @@ namespace HW04.Tests
         {
             var input = "The quick brown fox jumps over the lazy dog";
             var inputBytes = Encoding.Default.GetBytes(input);
-            var inputImage = await Image.LoadAsync<Rgba32>("Data/Coat_of_arms_of_Bruntal.jpg");
+
+            using var inputImage = await Image.LoadAsync<Rgba32>("Data/Coat_of_arms_of_Bruntal.jpg");
 
             var stegoImageProcessor = new StegoImageProcessor();
 
