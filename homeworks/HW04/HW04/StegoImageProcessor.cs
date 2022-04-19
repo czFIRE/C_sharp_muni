@@ -15,20 +15,36 @@ namespace HW04
 
         public Task<Image<Rgba32>> EncodePayload(Image<Rgba32> image, byte[] payload) => Task.Run(() =>
         {
+            // I wanna throw this, but this is more like "programmer, you are doing it wrong" vs "aaaaa, user bad, bad input"
             if (payload.Length > image.Width * image.Height - 1)
             {
                 throw new ArgumentException("Can't encode the message in this image!");
             }
 
             // Get compression ratio and store it in the first byte
+            byte compressionRatio = BitsInByte;
+            while(payload.Length * compressionRatio > image.Width * image.Height - 1)
+            {
+                compressionRatio /= 2;
+            }
 
             // This can be CPU-intensive, so it can run in separate task
             Rgba32[] pixelArray = new Rgba32[image.Width * image.Height];
             image.CopyPixelDataTo(pixelArray);
 
-            for (int i = 0; i < payload.Count(); i++)
+            // we will keep our compression ratio for each image separatelly - and it will be stored on the last 2 bits of the last element
+            pixelArray[image.Width * image.Height - 1].B = 
+                                (byte) (pixelArray[image.Width * image.Height - 1].B & 0xfc + (byte) Math.Log2(compressionRatio));
+            
+            byte maskKeep = (byte) (0xff - ((1 << (BitsInByte / compressionRatio)) - 1));
+
+            for (int i = 0; i < payload.Length; i++)
             {
-                pixelArray[i].B = payload[i];
+                var splitByte = ByteSpliting.Split(payload[i], BitsInByte / compressionRatio).ToArray();
+                for (int j = 0; j < compressionRatio; j++)
+                {
+                    pixelArray[i*compressionRatio + j].B = splitByte[j];
+                }
             }
 
             image.Dispose();
@@ -42,11 +58,21 @@ namespace HW04
             Rgba32[] pixelArray = new Rgba32[image.Width * image.Height];
             image.CopyPixelDataTo(pixelArray);
 
+            byte compressionRatio = (byte) (1 << (pixelArray[image.Width * image.Height - 1].B & 0x3));
+
+            var mask = ((1 << (BitsInByte / compressionRatio)) - 1);
+
             var res = new byte[dataSize];
+            var helperArr = new byte[compressionRatio];
 
             for (int i = 0; i < dataSize; i++)
             {
-                res[i] = pixelArray[i].B;
+                for (int j = 0; j < compressionRatio; j++)
+                {
+                    helperArr[j] = pixelArray[i * compressionRatio + j].B;
+                }
+
+                res[i] = ByteSpliting.Reform(helperArr, BitsInByte / compressionRatio);
             }
 
             image.Dispose();
