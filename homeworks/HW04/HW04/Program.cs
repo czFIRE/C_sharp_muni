@@ -18,6 +18,8 @@ var imageNames = new[]
     "John_Martin_-_The_Plains_of_Heaven.jpg"
 };
 
+// imageNames = imageNames.Take(1).ToArray();
+
 var chunks = stegoObject.GetDataChunks(imageNames.Count()).ToArray();
 
 // parameter for parralelization
@@ -44,4 +46,7 @@ Console.WriteLine("\nDecoding succesfull!\n");
 watch.Stop();
 Console.WriteLine($"Execution Time: {watch.ElapsedMilliseconds} ms\n");
 
-Console.WriteLine(Encoding.Default.GetString(decodedData));
+string resString = Encoding.Default.GetString(decodedData);
+Console.WriteLine(resString);
+
+Console.WriteLine($"Are they equal tho?: {resString == Samples.StringSample()}");
