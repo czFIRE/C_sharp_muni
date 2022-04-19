@@ -35,11 +35,7 @@ Console.WriteLine("\nEncoding succesfull!\n");
 
 // Decode it
 
-var precomputedStats = new List<int>();
-foreach (var chunk in chunks)
-{
-    precomputedStats.Add(chunk.Length);
-}
+List<int> precomputedStats = chunks.Select(s => s.Length).ToList();
 
 byte[] decodedData = await ApplicationLogic.decodeEverything(imageNames, precomputedStats, maxTasks);
 
