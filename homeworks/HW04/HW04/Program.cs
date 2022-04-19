@@ -1,8 +1,8 @@
 ﻿using HW04;
 using System.Text;
 
-const string inputPath = "../../../../Data/";
-const string outputPath = "../../../../Output/";
+var watch = new System.Diagnostics.Stopwatch();
+watch.Start();
 
 var stegoObject = StegoObject.LoadObject(Samples.StringSample(), (s) => Encoding.Default.GetBytes(s));
 
@@ -20,20 +20,32 @@ var imageNames = new[]
 
 var chunks = stegoObject.GetDataChunks(imageNames.Count()).ToArray();
 
+// parameter for parralelization
+int maxTasks = imageNames.Length;
+
 // Do the magic...
 
 Console.WriteLine($"MainThread: {Thread.CurrentThread.ManagedThreadId}");
 
 // Encode it
 
-await ApplicationLogic.encodeEverything(imageNames, chunks, 2);
+await ApplicationLogic.encodeEverything(imageNames, chunks, maxTasks);
 
 Console.WriteLine("\nEncoding succesfull!\n");
 
 // Decode it
 
-byte[] decodedData = await ApplicationLogic.decodeEverything(imageNames, chunks, 2);
+var precomputedStats = new List<int>();
+foreach (var chunk in chunks)
+{
+    precomputedStats.Add(chunk.Length);
+}
+
+byte[] decodedData = await ApplicationLogic.decodeEverything(imageNames, precomputedStats, maxTasks);
 
 Console.WriteLine("\nDecoding succesfull!\n");
+
+watch.Stop();
+Console.WriteLine($"Execution Time: {watch.ElapsedMilliseconds} ms\n");
 
 Console.WriteLine(Encoding.Default.GetString(decodedData));

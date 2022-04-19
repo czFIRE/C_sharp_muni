@@ -26,9 +26,6 @@ namespace HW04
             Rgba32[] pixelArray = new Rgba32[image.Width * image.Height];
             image.CopyPixelDataTo(pixelArray);
 
-            // THIS IS NOT DONE, BUT I WILL DEAL WITH THIS LATER
-            // byte mask = (byte) 0x3;
-
             for (int i = 0; i < payload.Count(); i++)
             {
                 pixelArray[i].B = payload[i];
