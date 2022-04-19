@@ -18,9 +18,22 @@ var imageNames = new[]
     "John_Martin_-_The_Plains_of_Heaven.jpg"
 };
 
+var chunks = stegoObject.GetDataChunks(imageNames.Count()).ToArray();
+
 // Do the magic...
+
+Console.WriteLine($"MainThread: {Thread.CurrentThread.ManagedThreadId}");
+
 // Encode it
+
+await ApplicationLogic.encodeEverything(imageNames, chunks, 2);
+
+Console.WriteLine("\nEncoding succesfull!\n");
+
 // Decode it
-byte[] decodedData = Array.Empty<byte>();
+
+byte[] decodedData = await ApplicationLogic.decodeEverything(imageNames, chunks, 2);
+
+Console.WriteLine("\nDecoding succesfull!\n");
 
 Console.WriteLine(Encoding.Default.GetString(decodedData));

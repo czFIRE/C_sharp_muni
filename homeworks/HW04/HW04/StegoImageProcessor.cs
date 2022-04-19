@@ -13,16 +13,28 @@ namespace HW04
 
         public Task SaveImageAsync(Image<Rgba32> image, string path) => Task.Run(async () => { await image.SaveAsync(path).ConfigureAwait(false); });
 
-        public Task<Image<Rgba32>> EncodePayload(Image<Rgba32> image, byte[] payload) => Task.Run(() => 
+        public Task<Image<Rgba32>> EncodePayload(Image<Rgba32> image, byte[] payload) => Task.Run(() =>
         {
+            if (payload.Length > image.Width * image.Height - 1)
+            {
+                throw new ArgumentException("Can't encode the message in this image!");
+            }
+
+            // Get compression ratio and store it in the first byte
+
             // This can be CPU-intensive, so it can run in separate task
             Rgba32[] pixelArray = new Rgba32[image.Width * image.Height];
             image.CopyPixelDataTo(pixelArray);
 
-            for (int i = 0; i < payload.Length; i++)
+            // THIS IS NOT DONE, BUT I WILL DEAL WITH THIS LATER
+            // byte mask = (byte) 0x3;
+
+            for (int i = 0; i < payload.Count(); i++)
             {
                 pixelArray[i].B = payload[i];
             }
+
+            image.Dispose();
 
             return Image.LoadPixelData<Rgba32>(pixelArray, image.Width, image.Height);
         });
@@ -39,6 +51,8 @@ namespace HW04
             {
                 res[i] = pixelArray[i].B;
             }
+
+            image.Dispose();
 
             return res;
         });
