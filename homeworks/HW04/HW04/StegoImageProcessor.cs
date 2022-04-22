@@ -16,6 +16,7 @@ namespace HW04
         public Task<Image<Rgba32>> EncodePayload(Image<Rgba32> image, byte[] payload) => Task.Run(() =>
         {
             // I wanna throw this, but this is more like "programmer, you are doing it wrong" vs "aaaaa, user bad, bad input"
+            // Thus I should control it outside of here, but ...
             if (payload.Length > image.Width * image.Height - 1)
             {
                 throw new ArgumentException("Can't encode the message in this image!");

@@ -7,12 +7,11 @@
 
         public async static Task encodeEverything(string[] imageNames, byte[][] chunks, int maxTasks)
         {
-            var processor = new StegoImageProcessor();
-
             using SemaphoreSlim sem = new SemaphoreSlim(maxTasks);
 
             var lambdaFunc = async (int i) =>
             {
+                var processor = new StegoImageProcessor();
                 await sem.WaitAsync();
                 Console.WriteLine($"Chunk {i}, Thread: {Thread.CurrentThread.ManagedThreadId}");
                 using var encodedImage = await processor.EncodePayload(await processor.LoadImageAsync(inputPath + imageNames[i]), chunks[i]);
@@ -35,14 +34,13 @@
 
         public async static Task<byte[]> decodeEverything(string[] imageNames, List<int> precomputedStats, int maxTasks)
         {
-            var processor = new StegoImageProcessor();
-
             byte[][] resultData = new byte[precomputedStats.Count][];
 
             using SemaphoreSlim sem = new SemaphoreSlim(maxTasks);
 
             var lambdaFunc = async (int i) =>
             {
+                var processor = new StegoImageProcessor();
                 await sem.WaitAsync();
                 Console.WriteLine($"Chunk {i}, Thread: {Thread.CurrentThread.ManagedThreadId}");
                 resultData[i] = await processor.ExtractPayload(await processor.LoadImageAsync(outputPath + imageNames[i] + ".png"), precomputedStats[i]);
@@ -58,7 +56,7 @@
 
             await Task.WhenAll(tasks);
 
-            // Everything needs to be parrallel (even though is probably slower)
+            // Everything needs to be parrallel (even though this is probably slower)
             return resultData.AsParallel().AsOrdered().SelectMany(s => s.ToArray()).ToArray();
         }
 
