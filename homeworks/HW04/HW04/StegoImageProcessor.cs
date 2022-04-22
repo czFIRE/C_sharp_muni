@@ -9,9 +9,9 @@ namespace HW04
 
         // Use constructor for additional configuration
 
-        public async Task<Image<Rgba32>> LoadImageAsync(string path) => await Image.LoadAsync<Rgba32>(path).ConfigureAwait(false);
+        public async Task<Image<Rgba32>> LoadImageAsync(string path) => await Image.LoadAsync<Rgba32>(path);
 
-        public Task SaveImageAsync(Image<Rgba32> image, string path) => Task.Run(async () => { await image.SaveAsync(path).ConfigureAwait(false); });
+        public Task SaveImageAsync(Image<Rgba32> image, string path) => Task.Run(() => { image.SaveAsync(path); });
 
         public Task<Image<Rgba32>> EncodePayload(Image<Rgba32> image, byte[] payload) => Task.Run(() =>
         {

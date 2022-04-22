@@ -12,11 +12,18 @@
             var lambdaFunc = async (int i) =>
             {
                 var processor = new StegoImageProcessor();
+                // make sure we can work when get to the semaphor
+                var image = await processor.LoadImageAsync(inputPath + imageNames[i]);
+
                 await sem.WaitAsync();
+
                 Console.WriteLine($"Chunk {i}, Thread: {Thread.CurrentThread.ManagedThreadId}");
-                using var encodedImage = await processor.EncodePayload(await processor.LoadImageAsync(inputPath + imageNames[i]), chunks[i]);
-                await processor.SaveImageAsync(encodedImage, outputPath + imageNames[i] + ".png");
+                using var encodedImage = await processor.EncodePayload(image, chunks[i]);
+                // We will start saving here, but we don't need to wait for it
+                var saveRes = processor.SaveImageAsync(encodedImage, outputPath + imageNames[i] + ".png");
+
                 sem.Release();
+                await saveRes;
             };
 
             var tasks = new Task[chunks.Length];
@@ -41,9 +48,15 @@
             var lambdaFunc = async (int i) =>
             {
                 var processor = new StegoImageProcessor();
+                // make sure we can work when get to the semaphor
+                var image = await processor.LoadImageAsync(outputPath + imageNames[i] + ".png");
+
                 await sem.WaitAsync();
+
                 Console.WriteLine($"Chunk {i}, Thread: {Thread.CurrentThread.ManagedThreadId}");
-                resultData[i] = await processor.ExtractPayload(await processor.LoadImageAsync(outputPath + imageNames[i] + ".png"), precomputedStats[i]);
+                // we need to await here since we have the limit on how many can work inside
+                resultData[i] = await processor.ExtractPayload(image, precomputedStats[i]);
+
                 sem.Release();
             };
 

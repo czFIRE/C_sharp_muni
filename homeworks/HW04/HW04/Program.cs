@@ -25,7 +25,7 @@ int maxTasks = imageNames.Length;
 
 // Do the magic...
 
-Console.WriteLine($"MainThread: {Thread.CurrentThread.ManagedThreadId}");
+Console.WriteLine($"MainThread: {Thread.CurrentThread.ManagedThreadId}\n");
 
 // Encode it
 
