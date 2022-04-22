@@ -24,7 +24,7 @@ namespace HW04
 
             // Get compression ratio and store it in the first byte
             byte compressionRatio = BitsInByte;
-            while(payload.Length * compressionRatio > image.Width * image.Height - 1)
+            while (payload.Length * compressionRatio > image.Width * image.Height - 1)
             {
                 compressionRatio /= 2;
             }
@@ -39,9 +39,9 @@ namespace HW04
             var tmp2 = tmp1 & 0xfc;
             var tmp3 = (byte)Math.Log2(compressionRatio);
 
-            pixelArray[image.Width * image.Height - 1].B = (byte) (tmp2 + tmp3);
-                                
-            byte maskKeep = (byte) (0xff - ((1 << (BitsInByte / compressionRatio)) - 1));
+            pixelArray[image.Width * image.Height - 1].B = (byte)(tmp2 + tmp3);
+
+            byte maskKeep = (byte)(0xff - ((1 << (BitsInByte / compressionRatio)) - 1));
 
             for (int i = 0; i < payload.Length; i++)
             {
@@ -49,7 +49,7 @@ namespace HW04
                 for (int j = 0; j < compressionRatio; j++)
                 {
                     int tmp = pixelArray[i * compressionRatio + j].B & maskKeep;
-                    pixelArray[i*compressionRatio + j].B = (byte)(tmp + splitByte[j]);
+                    pixelArray[i * compressionRatio + j].B = (byte)(tmp + splitByte[j]);
                 }
             }
 
@@ -65,7 +65,7 @@ namespace HW04
             image.CopyPixelDataTo(pixelArray);
 
             var helpTmp = pixelArray[image.Width * image.Height - 1].B;
-            byte compressionRatio = (byte) (1 << (helpTmp & 0x3));
+            byte compressionRatio = (byte)(1 << (helpTmp & 0x3));
 
             var mask = ((1 << (BitsInByte / compressionRatio)) - 1);
 
@@ -76,7 +76,7 @@ namespace HW04
             {
                 for (int j = 0; j < compressionRatio; j++)
                 {
-                    helperArr[j] = (byte) (pixelArray[i * compressionRatio + j].B & mask);
+                    helperArr[j] = (byte)(pixelArray[i * compressionRatio + j].B & mask);
                 }
 
                 res[i] = ByteSpliting.Reform(helperArr, BitsInByte / compressionRatio);
