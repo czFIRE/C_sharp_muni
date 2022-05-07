@@ -29,7 +29,7 @@ Console.WriteLine($"MainThread: {Thread.CurrentThread.ManagedThreadId}\n");
 
 // Encode it
 
-await ApplicationLogic.encodeEverything(imageNames, chunks, maxTasks);
+await ApplicationLogic.EncodeEverything(imageNames, chunks, maxTasks);
 
 Console.WriteLine("\nEncoding succesfull!\n");
 
@@ -37,7 +37,7 @@ Console.WriteLine("\nEncoding succesfull!\n");
 
 List<int> precomputedStats = chunks.Select(s => s.Length).ToList();
 
-byte[] decodedData = await ApplicationLogic.decodeEverything(imageNames, precomputedStats, maxTasks);
+byte[] decodedData = await ApplicationLogic.DecodeEverything(imageNames, precomputedStats, maxTasks);
 
 Console.WriteLine("\nDecoding succesfull!\n");
 

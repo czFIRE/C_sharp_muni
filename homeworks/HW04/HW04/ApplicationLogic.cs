@@ -2,10 +2,10 @@
 {
     public class ApplicationLogic
     {
-        const string inputPath = "../../../../Data/";
-        const string outputPath = "../../../../Output/";
+        const string InputPath = "../../../../Data/";
+        const string OutputPath = "../../../../Output/";
 
-        public async static Task encodeEverything(string[] imageNames, byte[][] chunks, int maxTasks)
+        public async static Task EncodeEverything(string[] imageNames, byte[][] chunks, int maxTasks)
         {
             using SemaphoreSlim sem = new SemaphoreSlim(maxTasks);
 
@@ -13,14 +13,14 @@
             {
                 var processor = new StegoImageProcessor();
                 // make sure we can work when get to the semaphor
-                var image = await processor.LoadImageAsync(inputPath + imageNames[i]);
+                var image = await processor.LoadImageAsync(InputPath + imageNames[i]);
 
                 await sem.WaitAsync();
 
                 Console.WriteLine($"Chunk {i}, Thread: {Thread.CurrentThread.ManagedThreadId}");
                 using var encodedImage = await processor.EncodePayload(image, chunks[i]);
                 // We will start saving here, but we don't need to wait for it
-                var saveRes = processor.SaveImageAsync(encodedImage, outputPath + imageNames[i] + ".png");
+                var saveRes = processor.SaveImageAsync(encodedImage, OutputPath + imageNames[i] + ".png");
 
                 sem.Release();
                 await saveRes;
@@ -39,7 +39,7 @@
             return;
         }
 
-        public async static Task<byte[]> decodeEverything(string[] imageNames, List<int> precomputedStats, int maxTasks)
+        public static async Task<byte[]> DecodeEverything(string[] imageNames, List<int> precomputedStats, int maxTasks)
         {
             byte[][] resultData = new byte[precomputedStats.Count][];
 
@@ -49,7 +49,7 @@
             {
                 var processor = new StegoImageProcessor();
                 // make sure we can work when get to the semaphor
-                var image = await processor.LoadImageAsync(outputPath + imageNames[i] + ".png");
+                var image = await processor.LoadImageAsync(OutputPath + imageNames[i] + ".png");
 
                 await sem.WaitAsync();
 

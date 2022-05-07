@@ -22,7 +22,7 @@ namespace HW04.Tests
                 "John_Martin_-_Sodom_and_Gomorrah.jpg",
                 "John_Martin_-_The_Great_Day_of_His_Wrath.jpg",
                 "John_Martin_-_The_Last_Judgement.jpg",
-                "John_Martin_-_The_Plains_of_Heaven.jpg"
+                "John_Martin_-_The_Plains_of_Heaven.jpg",
             };
 
             var chunks = StegoObject.LoadObject(Samples.StringSample(), (s) => Encoding.Default.GetBytes(s)).GetDataChunks(imageNames.Length).ToArray();
@@ -40,9 +40,9 @@ namespace HW04.Tests
                 var tmp = i;
                 tasks[i] = Task.Run(async () =>
                 {
-                    await ApplicationLogic.encodeEverything(imageNames, chunks, maxTasks);
+                    await ApplicationLogic.EncodeEverything(imageNames, chunks, maxTasks);
 
-                    byte[] decodedData = await ApplicationLogic.decodeEverything(imageNames, precomputedStats, maxTasks);
+                    byte[] decodedData = await ApplicationLogic.DecodeEverything(imageNames, precomputedStats, maxTasks);
 
                     string resString = Encoding.Default.GetString(decodedData);
 
