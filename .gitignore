@@ -6,6 +6,7 @@
 seminars/
 project/notes.txt
 project/data.txt
+project/AutoISClicker/timetable/*.xml
 
 # User-specific files
 *.rsuser

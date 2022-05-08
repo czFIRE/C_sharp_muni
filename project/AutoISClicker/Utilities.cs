@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AutoISClicker
+﻿namespace AutoISClicker
 {
     public class Utilities
     {
@@ -17,10 +11,10 @@ namespace AutoISClicker
 
         public static void GetUserLoginData(string location = "./data.txt")
         {
-            
+
             try
             {
-                Console.WriteLine("Trying to open file: " + location); 
+                Console.WriteLine("Trying to open file: " + location);
                 var file = System.IO.File.ReadLines(location);
 
                 int i = -1;
@@ -47,7 +41,7 @@ namespace AutoISClicker
 
                 Console.WriteLine("Enter you password.");
                 Password = Console.ReadLine().Trim();
-            }           
+            }
         }
 
         ~Utilities()

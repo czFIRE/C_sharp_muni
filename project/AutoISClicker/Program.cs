@@ -1,9 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using OpenQA.Selenium;
 
 var time = new AutoISClicker.ISTime();
 
 Console.WriteLine(time.GetISTime());
+
+Console.WriteLine(AutoISClicker.TimetableUtils.SemesterDurationInWeeks);
 
 return;
 
