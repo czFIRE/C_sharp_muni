@@ -7,11 +7,11 @@ namespace AutoISClicker
     public class ISLogin
     {
         /// <summary>
-        /// 
+        /// Creates new session and logs into IS.
         /// </summary>
         /// <param name="uco">UCO of the user</param>
         /// <param name="password">Password of the user</param>
-        /// <returns></returns>
+        /// <returns>IWebdriver logged into IS</returns>
         public static IWebDriver LoginToIS(string uco, string password)
         {
             IWebDriver driver = new FirefoxDriver("./../../../WebDriver/");

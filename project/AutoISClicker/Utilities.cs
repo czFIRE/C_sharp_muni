@@ -11,11 +11,16 @@ namespace AutoISClicker
         public static string UCO = String.Empty;
         public static string Password = String.Empty;
 
+        public static int OperationCounter = 0;
+        public static ReaderWriterLockSlim OperationLock = new ReaderWriterLockSlim();
+        public const int OperationLimit = 100;
+
         public static void GetUserLoginData(string location = "./data.txt")
         {
             
             try
             {
+                Console.WriteLine("Trying to open file: " + location); 
                 var file = System.IO.File.ReadLines(location);
 
                 int i = -1;
@@ -43,6 +48,11 @@ namespace AutoISClicker
                 Console.WriteLine("Enter you password.");
                 Password = Console.ReadLine().Trim();
             }           
+        }
+
+        ~Utilities()
+        {
+            if (OperationLock != null) OperationLock.Dispose();
         }
     }
 }

@@ -1,16 +1,18 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using OpenQA.Selenium;
 
-Console.WriteLine("Hello, World!");
+var time = new AutoISClicker.ISTime();
 
-Console.WriteLine(AutoISClicker.GlobalStorage.GetNetworkTime());
+Console.WriteLine(time.GetISTime());
+
+return;
 
 // AutoISClicker.GlobalStorage.operationLock;
 
-AutoISClicker.Utilities.GetUserLoginData("./../../../data.txt");
+AutoISClicker.Utilities.GetUserLoginData("./../../../../data.txt");
 
 var driver = AutoISClicker.ISLogin.LoginToIS(AutoISClicker.Utilities.UCO, AutoISClicker.Utilities.Password);
-driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(5);
+//driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(5);
 
 Console.WriteLine(driver.Url);
 

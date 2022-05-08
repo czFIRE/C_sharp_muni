@@ -3,29 +3,32 @@ using System.Net.Sockets;
 
 namespace AutoISClicker
 {
-    public class GlobalStorage
+    public class ISTime
     {
-        public static int operationCounter = 0;
-        public static ReaderWriterLockSlim operationLock = new ReaderWriterLockSlim();
-        public const int operationLimit = 100;
+        private TimeSpan TimeDifference;
 
-        public static DateTime GetNetworkTime()
+        public ISTime()
         {
-            //default Windows time server
+            TimeDifference = GetNetworkTimeDifference();
+        }
+
+        private TimeSpan GetNetworkTimeDifference()
+        {
+            // FI MUNI time server
             const string ntpServer = "time.fi.muni.cz";
 
             // NTP message size - 16 bytes of the digest (RFC 2030)
             var ntpData = new byte[48];
 
-            //Setting the Leap Indicator, Version Number and Mode values
+            // Setting the Leap Indicator, Version Number and Mode values
             ntpData[0] = 0x1B; //LI = 0 (no warning), VN = 3 (IPv4 only), Mode = 3 (Client Mode)
 
             var addresses = Dns.GetHostEntry(ntpServer).AddressList;
 
             // Addresses[1] since we want to use IPv4
-            //The UDP port number assigned to NTP is 123
+            // The UDP port number assigned to NTP is 123
             var ipEndPoint = new IPEndPoint(addresses[1], 123);
-            //NTP uses UDP
+            // NTP uses UDP
 
             using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
             {
@@ -39,30 +42,28 @@ namespace AutoISClicker
                 socket.Close();
             }
 
-            //Offset to get to the "Transmit Timestamp" field (time at which the reply 
-            //departed the server for the client, in 64-bit timestamp format."
+            // Offset to get to the "Transmit Timestamp" field (time at which the reply 
+            // departed the server for the client) in 64-bit timestamp format."
             const byte serverReplyTime = 40;
 
-            //Get the seconds part
+            // Get the seconds part
             ulong intPart = BitConverter.ToUInt32(ntpData, serverReplyTime);
 
-            //Get the seconds fraction
+            // Get the seconds fraction
             ulong fractPart = BitConverter.ToUInt32(ntpData, serverReplyTime + 4);
 
-            //Convert From big-endian to little-endian
+            // Convert From big-endian to little-endian
             intPart = SwapEndianness(intPart);
             fractPart = SwapEndianness(fractPart);
 
             var milliseconds = (intPart * 1000) + ((fractPart * 1000) / 0x100000000L);
 
-            //**UTC** time
-            var networkDateTime = (new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds((long)milliseconds);
-
-            return networkDateTime.ToLocalTime();
+            // Set the time difference
+            return DateTime.Now - (new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc)).AddMilliseconds((long)milliseconds);
         }
 
         // stackoverflow.com/a/3294698/162671
-        public static uint SwapEndianness(ulong x)
+        private uint SwapEndianness(ulong x)
         {
             return (uint)(((x & 0x000000ff) << 24) +
                            ((x & 0x0000ff00) << 8) +
@@ -70,10 +71,11 @@ namespace AutoISClicker
                            ((x & 0xff000000) >> 24));
         }
 
-        ~GlobalStorage()
+        public DateTime GetISTime()
         {
-            if (operationLock != null) operationLock.Dispose();
+            return DateTime.UtcNow + TimeDifference;
         }
+
 
     }
 }
