@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace AutoISClicker
 {
-    internal class Subject
+    // https://docs.microsoft.com/en-us/dotnet/api/system.xml.serialization.xmlserializer.deserialize?view=net-6.0
+
+    public class Subject
     {
         /// <summary>
         /// First class of the subject
@@ -35,8 +38,8 @@ namespace AutoISClicker
 
         public override string? ToString()
         {
-            return SubjectStart.Hour + ":" + SubjectStart.Minute + " - " + SubjectEnd.Hour + ":" + SubjectEnd.Minute + "\tSubject code: " + SubjectCode + " | Subject room: " + SubjectRoom
-                   + "\tSubject Name: " + SubjectName;
+            return SubjectStart.Hour.ToString("D2") + ":" + SubjectStart.Minute.ToString("D2") + " - " + SubjectEnd.Hour.ToString("D2") + ":" + SubjectEnd.Minute.ToString("D2") 
+                + "\tSubject code: " + SubjectCode + " | Subject room: " + SubjectRoom + "\tSubject Name: " + SubjectName;
         }
     }
 }

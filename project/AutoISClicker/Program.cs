@@ -1,16 +1,23 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 var time = new AutoISClicker.ISTime();
-
 Console.WriteLine(time.GetISTime());
 
-Console.WriteLine(AutoISClicker.TimetableUtils.SemesterDurationInWeeks);
+var timetable = AutoISClicker.TimetableUtils.DeserializeTimetable("./../../../timetable/wtf.xml");
 
-return;
+foreach (var t in timetable)
+{
+    foreach (var t2 in t)
+    {
+        Console.WriteLine(t2.ToString());
+    }
+
+    Console.WriteLine("\n\n\n");
+}
 
 // AutoISClicker.GlobalStorage.operationLock;
 
-AutoISClicker.Utilities.GetUserLoginData("./../../../../data.txt");
+AutoISClicker.Utilities.GetUserLoginData("./../../../../dat");
 
 var driver = AutoISClicker.ISLogin.LoginToIS(AutoISClicker.Utilities.UCO, AutoISClicker.Utilities.Password);
 //driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(5);
@@ -22,11 +29,5 @@ driver.Navigate().GoToUrl("https://is.muni.cz/auth/discussion/predmetove/ped/jar
 Console.WriteLine(driver.Url);
 
 Console.ReadLine();
-
-//IWebDriver driver2 = driver.;
-//driver2.Navigate().GoToUrl("https://is.muni.cz/auth/el/1433/jaro2022/PA152/");
-//Console.WriteLine(driver2.Url);
-//Console.ReadKey();
-//driver2.Quit();
 
 driver.Quit();

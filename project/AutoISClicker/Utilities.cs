@@ -39,8 +39,14 @@
                 Console.WriteLine("Enter you uco.");
                 UCO = Console.ReadLine().Trim();
 
-                Console.WriteLine("Enter you password.");
-                Password = Console.ReadLine().Trim();
+                Console.WriteLine("password: ");
+                while (true)
+                {
+                    var key = System.Console.ReadKey(true);
+                    if (key.Key == ConsoleKey.Enter)
+                        break;
+                    Password += key.KeyChar;
+                }
             }
         }
 

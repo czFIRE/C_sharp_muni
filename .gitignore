@@ -5,7 +5,7 @@
 
 seminars/
 project/notes.txt
-project/data.txt
+project/data
 project/AutoISClicker/timetable/*.xml
 
 # User-specific files
