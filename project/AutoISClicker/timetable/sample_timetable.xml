@@ -1,0 +1,318 @@
+<rozvrh>
+	<minhod>480</minhod>
+	<maxhod>1200</maxhod>
+	<hodiny>
+		<hodina>
+			<od>8:00</od>
+			<do>8:50</do>
+		</hodina>
+		<hodina>
+			<od>9:00</od>
+			<do>9:50</do>
+		</hodina>
+		<hodina>
+			<od>10:00</od>
+			<do>10:50</do>
+		</hodina>
+		<hodina>
+			<od>11:00</od>
+			<do>11:50</do>
+		</hodina>
+		<hodina>
+			<od>12:00</od>
+			<do>12:50</do>
+		</hodina>
+		<hodina>
+			<od>13:00</od>
+			<do>13:50</do>
+		</hodina>
+		<hodina>
+			<od>14:00</od>
+			<do>14:50</do>
+		</hodina>
+		<hodina>
+			<od>15:00</od>
+			<do>15:50</do>
+		</hodina>
+		<hodina>
+			<od>16:00</od>
+			<do>16:50</do>
+		</hodina>
+		<hodina>
+			<od>17:00</od>
+			<do>17:50</do>
+		</hodina>
+		<hodina>
+			<od>18:00</od>
+			<do>18:50</do>
+		</hodina>
+		<hodina>
+			<od>19:00</od>
+			<do>19:50</do>
+		</hodina>
+	</hodiny>
+	<tabulka>
+		<den id="Po 9. 5." rows="1">
+			<radek num="1">
+				<slot pdiff="16" diff="24" odcas="08:00" docas="09:50">
+					<mistnosti>
+						<mistnost>
+							<mistnostozn>A318</mistnostozn>
+							<mistnostid>12964</mistnostid>
+						</mistnost>
+					</mistnosti>
+					<akce>
+						<kod>PA228</kod>
+						<nazev>ML in Image Processing</nazev>
+						<predmetid>1412815</predmetid>
+						<fakulta_url>fi</fakulta_url>
+						<obdobi_url>jaro2022</obdobi_url>
+					</akce>
+				</slot>
+				<slot pdiff="16" diff="24" odcas="10:00" docas="11:50">
+					<mistnosti>
+						<mistnost>
+							<mistnostozn>B311</mistnostozn>
+							<mistnostid>791</mistnostid>
+						</mistnost>
+					</mistnosti>
+					<akce>
+						<kod>PA228/01</kod>
+						<nazev>ML in Image Processing</nazev>
+						<predmetid>1412815</predmetid>
+						<fakulta_url>fi</fakulta_url>
+						<obdobi_url>jaro2022</obdobi_url>
+					</akce>
+				</slot>
+				<break pdiff="8" diff="12" odcas="12:00" docas="13:00"/>
+				<break pdiff="8" diff="12" odcas="13:00" docas="14:00"/>
+				<slot pdiff="16" diff="24" odcas="14:00" docas="15:50">
+					<mistnosti>
+						<mistnost>
+							<mistnostozn>A215</mistnostozn>
+							<mistnostid>12848</mistnostid>
+						</mistnost>
+					</mistnosti>
+					<akce>
+						<kod>PB138/05</kod>
+						<nazev>Moderní značkovací jazyky</nazev>
+						<predmetid>1406116</predmetid>
+						<fakulta_url>fi</fakulta_url>
+						<obdobi_url>jaro2022</obdobi_url>
+					</akce>
+				</slot>
+				<slot pdiff="16" diff="24" odcas="16:00" docas="17:50">
+					<mistnosti>
+						<mistnost>
+							<mistnostozn>D1</mistnostozn>
+							<mistnostid>534</mistnostid>
+						</mistnost>
+					</mistnosti>
+					<akce>
+						<kod>PB138</kod>
+						<nazev>Moderní značkovací jazyky</nazev>
+						<predmetid>1406116</predmetid>
+						<fakulta_url>fi</fakulta_url>
+						<obdobi_url>jaro2022</obdobi_url>
+					</akce>
+				</slot>
+				<break pdiff="8" diff="12" odcas="18:00" docas="19:00"/>
+				<break pdiff="8" diff="12" odcas="19:00" docas="20:00"/>
+			</radek>
+		</den>
+		<den id="Út 10. 5." rows="1">
+			<radek num="1">
+				<break pdiff="8" diff="12" odcas="8:00" docas="9:00"/>
+				<break pdiff="8" diff="12" odcas="9:00" docas="10:00"/>
+				<break pdiff="8" diff="12" odcas="10:00" docas="11:00"/>
+				<break pdiff="8" diff="12" odcas="11:00" docas="12:00"/>
+				<slot pdiff="16" diff="24" odcas="12:00" docas="13:50" now="1">
+					<mistnosti>
+						<mistnost>
+							<mistnostozn>B116</mistnostozn>
+							<mistnostid>401</mistnostid>
+						</mistnost>
+					</mistnosti>
+					<akce>
+						<kod>PB071/08</kod>
+						<nazev>Principy nízkoúr. prog.</nazev>
+						<predmetid>1406115</predmetid>
+						<fakulta_url>fi</fakulta_url>
+						<obdobi_url>jaro2022</obdobi_url>
+					</akce>
+				</slot>
+				<slot pdiff="16" diff="24" odcas="14:00" docas="15:50">
+					<mistnosti>
+						<mistnost>
+							<mistnostozn>A217</mistnostozn>
+							<mistnostid>12965</mistnostid>
+						</mistnost>
+					</mistnosti>
+					<akce>
+						<kod>PA039</kod>
+						<nazev>Supercomputer Architecture</nazev>
+						<predmetid>1406065</predmetid>
+						<fakulta_url>fi</fakulta_url>
+						<obdobi_url>jaro2022</obdobi_url>
+					</akce>
+				</slot>
+				<slot pdiff="16" diff="24" odcas="16:00" docas="17:50">
+					<mistnosti>
+						<mistnost>
+							<mistnostozn>D3</mistnostozn>
+							<mistnostid>2362</mistnostid>
+						</mistnost>
+					</mistnosti>
+					<akce>
+						<kod>PA152</kod>
+						<nazev>Efficient Use of DB Systems</nazev>
+						<predmetid>1406076</predmetid>
+						<fakulta_url>fi</fakulta_url>
+						<obdobi_url>jaro2022</obdobi_url>
+					</akce>
+				</slot>
+				<break pdiff="8" diff="12" odcas="18:00" docas="19:00"/>
+				<break pdiff="8" diff="12" odcas="19:00" docas="20:00"/>
+			</radek>
+		</den>
+		<den id="St 11. 5." rows="1">
+			<radek num="1">
+				<slot pdiff="16" diff="24" odcas="08:00" docas="09:50">
+					<mistnosti>
+						<mistnost>
+							<mistnostozn>D1</mistnostozn>
+							<mistnostid>534</mistnostid>
+						</mistnost>
+					</mistnosti>
+					<akce>
+						<kod>PV056</kod>
+						<nazev>Strojové učení a znalosti</nazev>
+						<predmetid>1406132</predmetid>
+						<fakulta_url>fi</fakulta_url>
+						<obdobi_url>jaro2022</obdobi_url>
+					</akce>
+				</slot>
+				<slot pdiff="16" diff="24" odcas="10:00" docas="11:50">
+					<mistnosti>
+						<mistnost>
+							<mistnostozn>učebna 65</mistnostozn>
+							<mistnostid>12396</mistnostid>
+						</mistnost>
+					</mistnosti>
+					<akce>
+						<kod>NJ_B202/Prez01</kod>
+						<nazev>Jazyková cvičení B2+/1</nazev>
+						<predmetid>1357556</predmetid>
+						<fakulta_url>ped</fakulta_url>
+						<obdobi_url>jaro2022</obdobi_url>
+					</akce>
+				</slot>
+				<slot pdiff="16" diff="24" odcas="12:00" docas="13:50">
+					<mistnosti>
+						<mistnost>
+							<mistnostozn>B311</mistnostozn>
+							<mistnostid>791</mistnostid>
+						</mistnost>
+					</mistnosti>
+					<akce>
+						<kod>PV178/12</kod>
+						<nazev>Úvod do vývoje v C#/.NET</nazev>
+						<predmetid>1406159</predmetid>
+						<fakulta_url>fi</fakulta_url>
+						<obdobi_url>jaro2022</obdobi_url>
+					</akce>
+				</slot>
+				<break pdiff="8" diff="12" odcas="14:00" docas="15:00"/>
+				<break pdiff="8" diff="12" odcas="15:00" docas="16:00"/>
+				<slot pdiff="16" diff="24" odcas="16:00" docas="17:50">
+					<mistnosti>
+						<mistnost>
+							<mistnostozn>D1</mistnostozn>
+							<mistnostid>534</mistnostid>
+						</mistnost>
+					</mistnosti>
+					<akce>
+						<kod>IB109</kod>
+						<nazev>Návrh paralelních systémů</nazev>
+						<predmetid>1406027</predmetid>
+						<fakulta_url>fi</fakulta_url>
+						<obdobi_url>jaro2022</obdobi_url>
+					</akce>
+				</slot>
+				<slot pdiff="16" diff="24" odcas="18:00" docas="19:50">
+					<mistnosti>
+						<mistnost>
+							<mistnostozn>J4</mistnostozn>
+							<mistnostid>8914</mistnostid>
+						</mistnost>
+					</mistnosti>
+					<akce>
+						<kod>XS450/04</kod>
+						<nazev>Komunikační trénink</nazev>
+						<predmetid>1401206</predmetid>
+						<fakulta_url>sci</fakulta_url>
+						<obdobi_url>jaro2022</obdobi_url>
+					</akce>
+				</slot>
+			</radek>
+		</den>
+		<den id="Čt 12. 5." rows="1">
+			<radek num="1">
+				<break pdiff="8" diff="12" odcas="8:00" docas="9:00"/>
+				<break pdiff="8" diff="12" odcas="9:00" docas="10:00"/>
+				<break pdiff="8" diff="12" odcas="10:00" docas="11:00"/>
+				<break pdiff="8" diff="12" odcas="11:00" docas="12:00"/>
+				<slot pdiff="16" diff="24" odcas="12:00" docas="13:50">
+					<mistnosti>
+						<mistnost>
+							<mistnostozn>B116</mistnostozn>
+							<mistnostid>401</mistnostid>
+						</mistnost>
+					</mistnosti>
+					<akce>
+						<kod>PB071/07</kod>
+						<nazev>Principy nízkoúr. prog.</nazev>
+						<predmetid>1406115</predmetid>
+						<fakulta_url>fi</fakulta_url>
+						<obdobi_url>jaro2022</obdobi_url>
+					</akce>
+				</slot>
+				<break pdiff="8" diff="12" odcas="14:00" docas="15:00"/>
+				<break pdiff="8" diff="12" odcas="15:00" docas="16:00"/>
+				<break pdiff="8" diff="12" odcas="16:00" docas="17:00"/>
+				<break pdiff="8" diff="12" odcas="17:00" docas="18:00"/>
+				<break pdiff="8" diff="12" odcas="18:00" docas="19:00"/>
+				<break pdiff="8" diff="12" odcas="19:00" docas="20:00"/>
+			</radek>
+		</den>
+		<den id="Pá 13. 5." rows="1">
+			<radek num="1">
+				<break pdiff="8" diff="12" odcas="8:00" docas="9:00"/>
+				<break pdiff="8" diff="12" odcas="9:00" docas="10:00"/>
+				<slot pdiff="16" diff="24" odcas="10:00" docas="11:50">
+					<mistnosti>
+						<mistnost>
+							<mistnostozn>D2</mistnostozn>
+							<mistnostid>533</mistnostid>
+						</mistnost>
+					</mistnosti>
+					<akce>
+						<kod>PV178</kod>
+						<nazev>Úvod do vývoje v C#/.NET</nazev>
+						<predmetid>1406159</predmetid>
+						<fakulta_url>fi</fakulta_url>
+						<obdobi_url>jaro2022</obdobi_url>
+					</akce>
+				</slot>
+				<break pdiff="8" diff="12" odcas="12:00" docas="13:00"/>
+				<break pdiff="8" diff="12" odcas="13:00" docas="14:00"/>
+				<break pdiff="8" diff="12" odcas="14:00" docas="15:00"/>
+				<break pdiff="8" diff="12" odcas="15:00" docas="16:00"/>
+				<break pdiff="8" diff="12" odcas="16:00" docas="17:00"/>
+				<break pdiff="8" diff="12" odcas="17:00" docas="18:00"/>
+				<break pdiff="8" diff="12" odcas="18:00" docas="19:00"/>
+				<break pdiff="8" diff="12" odcas="19:00" docas="20:00"/>
+			</radek>
+		</den>
+	</tabulka>
+</rozvrh>
