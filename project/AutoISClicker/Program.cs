@@ -3,7 +3,7 @@
 var time = new AutoISClicker.ISTime();
 Console.WriteLine(time.GetISTime());
 
-var timetable = AutoISClicker.TimetableUtils.DeserializeTimetable("./../../../timetable/wtf.xml");
+var timetable = AutoISClicker.TimetableUtils.DeserializeTimetableFromISExport("./../../../data/sample_timetable.xml");
 
 foreach (var t in timetable)
 {
@@ -14,6 +14,9 @@ foreach (var t in timetable)
 
     Console.WriteLine("\n\n\n");
 }
+
+AutoISClicker.TimetableUtils.SerializeTimetable(timetable, "./../../../data/serialized/");
+var timetab2 = AutoISClicker.TimetableUtils.DeserializeTimetable("./../../../data/serialized/");
 
 // AutoISClicker.GlobalStorage.operationLock;
 

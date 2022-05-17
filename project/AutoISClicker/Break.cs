@@ -19,6 +19,11 @@ namespace AutoISClicker
 
         }
 
+        public Break()
+        {
+
+        }
+
         public override string? ToString()
         {
             return SubjectStart.Hour.ToString("D2") + ":" + SubjectStart.Minute.ToString("D2") + " - " + SubjectEnd.Hour.ToString("D2") + ":" + SubjectEnd.Minute.ToString("D2") + "\tBREAK";

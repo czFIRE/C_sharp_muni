@@ -9,6 +9,8 @@ namespace AutoISClicker
 {
     // https://docs.microsoft.com/en-us/dotnet/api/system.xml.serialization.xmlserializer.deserialize?view=net-6.0
 
+
+    [XmlInclude(typeof(Break))]
     public class Subject
     {
         /// <summary>
@@ -34,6 +36,11 @@ namespace AutoISClicker
             SubjectCode = subjectCode;
             SubjectRoom = subjectRoom;
             this.periodicity = periodicity;
+        }
+
+        public Subject()
+        {
+
         }
 
         public override string? ToString()
