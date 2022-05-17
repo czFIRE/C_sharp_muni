@@ -5,16 +5,6 @@ Console.WriteLine(time.GetISTime());
 
 var timetable = AutoISClicker.TimetableUtils.DeserializeTimetableFromISExport("./../../../data/sample_timetable.xml");
 
-foreach (var t in timetable)
-{
-    foreach (var t2 in t)
-    {
-        Console.WriteLine(t2.ToString());
-    }
-
-    Console.WriteLine("\n\n\n");
-}
-
 AutoISClicker.TimetableUtils.SerializeTimetable(timetable, "./../../../data/serialized/");
 var timetab2 = AutoISClicker.TimetableUtils.DeserializeTimetable("./../../../data/serialized/");
 
@@ -29,20 +19,19 @@ foreach (var t in timetab2)
 }
 
 
-// AutoISClicker.GlobalStorage.operationLock;
+AutoISClicker.Utilities.GetUserLoginData("./../../../../data");
 
-AutoISClicker.Utilities.GetUserLoginData("./../../../../dat");
+// var iSInstance = new AutoISClicker.ISInstance();
+// var driver = iSInstance.LoginToIS(AutoISClicker.Utilities.UCO, AutoISClicker.Utilities.Password);
 
-var iSInstance = new AutoISClicker.ISInstance();
-var driver = iSInstance.LoginToIS(AutoISClicker.Utilities.UCO, AutoISClicker.Utilities.Password);
-//driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(5);
+// iSInstance.SignUpForGroup("https://is.muni.cz/auth/seminare/student?fakulta=1433;obdobi=8404;studium=1144620;predmet=1406116;prihlasit=667750;akce=podrob;provest=1;stopwindow=1;design=m");
 
-Console.WriteLine(driver.Url);
+AutoISClicker.Utilities.RunRealTask();
 
-iSInstance.SignUpForGroup("https://is.muni.cz/auth/discussion/predmetove/ped/jaro2022/NJ_B202/");
-
-Console.WriteLine(driver.Url);
+Console.WriteLine("Operations: " + AutoISClicker.Utilities.OperationCounter);
 
 Console.ReadLine();
 
-driver.Quit();
+Console.WriteLine("Operations: " + AutoISClicker.Utilities.OperationCounter);
+
+// driver.Quit();

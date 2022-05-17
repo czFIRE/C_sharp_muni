@@ -6,10 +6,10 @@ namespace AutoISClicker
 {
     public class ISInstance
     {
-        IWebDriver driver { get; }
+        public IWebDriver Driver { get; }
         public ISInstance(string driverLocation = "./../../../WebDriver/")
         {
-            driver = new FirefoxDriver("./../../../WebDriver/");
+            Driver = new FirefoxDriver("./../../../WebDriver/");
         }
 
         /// <summary>
@@ -24,37 +24,37 @@ namespace AutoISClicker
 
             try
             {
-                driver.Url = "https://is.muni.cz/";
-                driver.FindElement(By.XPath("/html/body/div/div[2]/main/div[1]/div/div/a")).Click();
+                Driver.Url = "https://is.muni.cz/";
+                Driver.FindElement(By.XPath("/html/body/div/div[2]/main/div[1]/div/div/a")).Click();
 
                 // To make it less "flashy"
                 Thread.Sleep(1000);
 
-                driver.FindElement(By.XPath("/html/body/div/div[2]/div[2]/main/div/div/form/div[1]/div/div/span[1]/input"))
+                Driver.FindElement(By.XPath("/html/body/div/div[2]/div[2]/main/div/div/form/div[1]/div/div/span[1]/input"))
                             .SendKeys(uco);
 
-                driver.FindElement(By.XPath("/html/body/div/div[2]/div[2]/main/div/div/form/div[1]/div/div/span[3]/input"))
+                Driver.FindElement(By.XPath("/html/body/div/div[2]/div[2]/main/div/div/form/div[1]/div/div/span[3]/input"))
                             .SendKeys(password + Keys.Enter);
 
-                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+                var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(30));
                 wait.Until(driver => driver.Url == "https://is.muni.cz/auth/");
             }
             catch
             {
                 Console.WriteLine("[error] this task has some error");
             }
-            return driver;
+            return Driver;
         }
 
-        public IWebDriver SignUpForGroup(string url)
+        public bool SignUpForGroup(string url)
         {
-            //while(!Utilities.AccessLock(1)) { }
+            while(!Utilities.AccessLock(1)) { }
 
-            driver.Navigate().GoToUrl(url);
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+            Driver.Navigate().GoToUrl(url);
+            var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(30));
             wait.Until(driver => driver.Url == url);
 
-            return driver;
+            return Driver.FindElement(By.XPath("/html/body/div/div[2]/div/div/h3")).Text == "Úspěšně přihlášeno.";
         }
 
         public void SignUpForGroupsFromSubject(string filePath)
@@ -63,13 +63,26 @@ namespace AutoISClicker
  
             while(Utilities.OperationCounter < Utilities.OperationLimit)
             {
-                while (!Utilities.AccessLock(fileLines.Count())) { }
+                // while (!Utilities.AccessLock(fileLines.Count())) { }
                 
                 foreach (var line in fileLines)
                 {
-                    this.SignUpForGroup(line);
+                    if(this.SignUpForGroup(line))
+                    {
+                        Console.WriteLine("Signed up for group: " + line);
+                    } else
+                    {
+                        Console.WriteLine("FAILED for group: " + line);
+                    }
                 }
+
+                return;
             }
+        }
+
+        ~ISInstance()
+        {
+            Driver.Quit();
         }
     }
 }

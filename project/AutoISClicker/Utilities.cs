@@ -100,6 +100,32 @@
             });
         }
 
+        public static async void RunRealTask(string dirPath = "./../../../data/subjects/")
+        {
+            var files = Directory.EnumerateFiles(dirPath).ToArray();
+
+            var tasks = new Task[files.Count()];
+
+            for (int i = 0; i < files.Count(); i++)
+            {
+                int tmp = i;
+
+                tasks[i] = Task.Run(() =>
+                {
+                    var iSInstance = new AutoISClicker.ISInstance();
+                    iSInstance.LoginToIS(AutoISClicker.Utilities.UCO, AutoISClicker.Utilities.Password);
+
+                    iSInstance.SignUpForGroupsFromSubject(files[tmp]);
+
+                    // iSInstance.Driver.Quit();
+                });
+            }
+
+            await Task.WhenAll(tasks);
+
+            return;
+        }
+
         ~Utilities()
         {
             if (OperationLock != null) OperationLock.Dispose();
