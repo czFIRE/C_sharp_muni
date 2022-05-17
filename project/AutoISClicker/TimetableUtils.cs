@@ -95,7 +95,7 @@ namespace AutoISClicker
             return new Subject(fromTime, toTime, subjectName, subjectCode, rooms);
         }
 
-        private static Break BreakFromSlot(XmlNode slot, int offset)
+        private static Subject BreakFromSlot(XmlNode slot, int offset)
         {
             var attributes = slot.Attributes;
 
@@ -104,7 +104,7 @@ namespace AutoISClicker
             DateTime fromTime = DateFromTime(attributes["odcas"], offset);
             DateTime toTime = DateFromTime(attributes["docas"], offset);
 
-            return new Break(fromTime, toTime);
+            return new Subject(fromTime, toTime);
         }
 
         public static List<Subject>[] DeserializeTimetableFromISExport(string filename)
@@ -147,15 +147,12 @@ namespace AutoISClicker
 
         public static void SerializeTimetable(List<Subject>[] timetable, string folderPath = "./../../../data/serialized/")
         {
-            var serializer = new XmlSerializer(typeof(Subject));
+            var serializer = new XmlSerializer(typeof(List<Subject>), new Type[] { typeof(Subject) });
             for (int i = 0; i < timetable.Length; i++)
             {
                 using var writer = new StreamWriter(folderPath + Enum.GetName(typeof(DayOfWeek), (i + 1) % 7) + ".xml", false);
 
-                foreach (var subject in timetable[i])
-                {
-                    serializer.Serialize(writer, subject);
-                }
+                serializer.Serialize(writer, timetable[i]);
             }
 
         }
@@ -164,19 +161,14 @@ namespace AutoISClicker
         {
             // maybe replace this with directory "size"
             List<Subject>[] timetable = new List<Subject>[DAYS_IN_WEEK];
-            var serializer = new XmlSerializer(typeof(Subject));
+            var serializer = new XmlSerializer(typeof(List<Subject>), new Type[] { typeof(Subject) });
 
             for (int i = 0; i < DAYS_IN_WEEK; i++)
             {
-                timetable[i] = new List<Subject>();
-
                 using var reader = new StreamReader(folderPath + Enum.GetName(typeof(DayOfWeek), (i + 1) % 7) + ".xml");
 
-                var tmp = serializer.Deserialize(reader);
-                ;
+                timetable[i] = (List<Subject>) serializer.Deserialize(reader);
             }
-
-
 
             return timetable;
         }

@@ -7,15 +7,15 @@
 
         public static int OperationCounter = 0;
         public static ReaderWriterLockSlim OperationLock = new ReaderWriterLockSlim();
-        public const int OperationLimit = 100;
+        public const int OperationLimit = 50; // max 100
 
-        public static void GetUserLoginData(string location = "./data.txt")
+        public static void GetUserLoginData(string filePath = "./data.txt")
         {
 
             try
             {
-                Console.WriteLine("Trying to open file: " + location);
-                var file = System.IO.File.ReadLines(location);
+                Console.WriteLine("Trying to open file: " + filePath);
+                var file = System.IO.File.ReadLines(filePath);
 
                 int i = -1;
                 foreach (string line in file)
@@ -48,6 +48,56 @@
                     Password += key.KeyChar;
                 }
             }
+        }
+
+        // https://stackoverflow.com/questions/42839394/asynchronous-processing-of-work-items-from-a-priority-queue
+
+        public static bool AccessLock(int operationCost)
+        {
+
+            if (OperationCounter > OperationLimit && operationCost != 0)
+            {
+                return false;
+            }
+
+            OperationLock.EnterWriteLock();
+
+            //critical section
+
+            if (OperationCounter > OperationLimit && operationCost != 0)
+            {
+                OperationLock.ExitWriteLock();
+                return false;
+            }
+
+            if (operationCost == 0)
+            {
+                // nulling the counter
+                OperationCounter = operationCost;
+            } else
+            {
+                OperationCounter += operationCost;
+            }
+
+            //
+
+            OperationLock.ExitWriteLock();
+            return true;
+        }
+
+        public static void CounterReseter()
+        {
+            Task.Run(() =>
+            {
+                while(true)
+                {
+                    //sleep for a minute
+                    Thread.Sleep(60000);
+
+                    // reset counter
+                    AccessLock(0);
+                }
+            });
         }
 
         ~Utilities()

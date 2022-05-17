@@ -14,6 +14,8 @@ namespace AutoISClicker
 
         private TimeSpan GetNetworkTimeDifference()
         {
+            while (!Utilities.AccessLock(1)) { }
+
             // FI MUNI time server
             const string ntpServer = "time.fi.muni.cz";
 

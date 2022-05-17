@@ -4,17 +4,24 @@ using OpenQA.Selenium.Support.UI;
 
 namespace AutoISClicker
 {
-    public class ISLogin
+    public class ISInstance
     {
+        IWebDriver driver { get; }
+        public ISInstance(string driverLocation = "./../../../WebDriver/")
+        {
+            driver = new FirefoxDriver("./../../../WebDriver/");
+        }
+
         /// <summary>
         /// Creates new session and logs into IS.
         /// </summary>
         /// <param name="uco">UCO of the user</param>
         /// <param name="password">Password of the user</param>
         /// <returns>IWebdriver logged into IS</returns>
-        public static IWebDriver LoginToIS(string uco, string password)
+        public IWebDriver LoginToIS(string uco, string password)
         {
-            IWebDriver driver = new FirefoxDriver("./../../../WebDriver/");
+            while (!Utilities.AccessLock(3)) { }
+
             try
             {
                 driver.Url = "https://is.muni.cz/";
@@ -37,6 +44,32 @@ namespace AutoISClicker
                 Console.WriteLine("[error] this task has some error");
             }
             return driver;
+        }
+
+        public IWebDriver SignUpForGroup(string url)
+        {
+            //while(!Utilities.AccessLock(1)) { }
+
+            driver.Navigate().GoToUrl(url);
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+            wait.Until(driver => driver.Url == url);
+
+            return driver;
+        }
+
+        public void SignUpForGroupsFromSubject(string filePath)
+        {
+            var fileLines = System.IO.File.ReadLines(filePath);
+ 
+            while(Utilities.OperationCounter < Utilities.OperationLimit)
+            {
+                while (!Utilities.AccessLock(fileLines.Count())) { }
+                
+                foreach (var line in fileLines)
+                {
+                    this.SignUpForGroup(line);
+                }
+            }
         }
     }
 }

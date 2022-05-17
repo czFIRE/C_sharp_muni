@@ -18,16 +18,28 @@ foreach (var t in timetable)
 AutoISClicker.TimetableUtils.SerializeTimetable(timetable, "./../../../data/serialized/");
 var timetab2 = AutoISClicker.TimetableUtils.DeserializeTimetable("./../../../data/serialized/");
 
+foreach (var t in timetab2)
+{
+    foreach (var t2 in t)
+    {
+        Console.WriteLine(t2.ToString());
+    }
+
+    Console.WriteLine("\n\n\n");
+}
+
+
 // AutoISClicker.GlobalStorage.operationLock;
 
 AutoISClicker.Utilities.GetUserLoginData("./../../../../dat");
 
-var driver = AutoISClicker.ISLogin.LoginToIS(AutoISClicker.Utilities.UCO, AutoISClicker.Utilities.Password);
+var iSInstance = new AutoISClicker.ISInstance();
+var driver = iSInstance.LoginToIS(AutoISClicker.Utilities.UCO, AutoISClicker.Utilities.Password);
 //driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(5);
 
 Console.WriteLine(driver.Url);
 
-driver.Navigate().GoToUrl("https://is.muni.cz/auth/discussion/predmetove/ped/jaro2022/NJ_B202/");
+iSInstance.SignUpForGroup("https://is.muni.cz/auth/discussion/predmetove/ped/jaro2022/NJ_B202/");
 
 Console.WriteLine(driver.Url);
 
