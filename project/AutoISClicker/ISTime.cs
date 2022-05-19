@@ -29,7 +29,16 @@ namespace AutoISClicker
 
             // Addresses[1] since we want to use IPv4
             // The UDP port number assigned to NTP is 123
-            var ipEndPoint = new IPEndPoint(addresses[1], 123);
+            IPEndPoint ipEndPoint;
+
+            try
+            {
+                ipEndPoint = new IPEndPoint(addresses[1], 123);
+            }
+            catch (Exception e)
+            {
+                ipEndPoint = new IPEndPoint(addresses[0], 123);
+            }
             // NTP uses UDP
 
             using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))

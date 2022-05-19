@@ -5,7 +5,7 @@
         public static string UCO = String.Empty;
         public static string Password = String.Empty;
 
-        public static int OperationCounter = 0;
+        public static long OperationCounter = 0;
         public static ReaderWriterLockSlim OperationLock = new ReaderWriterLockSlim();
         public const int OperationLimit = 50; // max 100
 
@@ -36,10 +36,10 @@
             }
             catch (FileNotFoundException)
             {
-                Console.WriteLine("Enter you uco.");
+                Console.WriteLine("Enter you uco:");
                 UCO = Console.ReadLine().Trim();
 
-                Console.WriteLine("password: ");
+                Console.WriteLine("Enter your password:");
                 while (true)
                 {
                     var key = System.Console.ReadKey(true);
@@ -55,7 +55,7 @@
         public static bool AccessLock(int operationCost)
         {
 
-            if (OperationCounter > OperationLimit && operationCost != 0)
+            if (Interlocked.Read(ref Utilities.OperationCounter) > OperationLimit && operationCost != 0)
             {
                 return false;
             }
@@ -64,7 +64,7 @@
 
             //critical section
 
-            if (OperationCounter > OperationLimit && operationCost != 0)
+            if (Interlocked.Read(ref Utilities.OperationCounter) > OperationLimit && operationCost != 0)
             {
                 OperationLock.ExitWriteLock();
                 return false;
@@ -73,10 +73,11 @@
             if (operationCost == 0)
             {
                 // nulling the counter
-                OperationCounter = operationCost;
-            } else
+                Interlocked.Exchange(ref Utilities.OperationCounter, operationCost);
+            }
+            else
             {
-                OperationCounter += operationCost;
+                Interlocked.Add(ref Utilities.OperationCounter, operationCost);
             }
 
             //
@@ -89,7 +90,7 @@
         {
             Task.Run(() =>
             {
-                while(true)
+                while (true)
                 {
                     //sleep for a minute
                     Thread.Sleep(60000);
@@ -110,14 +111,18 @@
             {
                 int tmp = i;
 
-                tasks[i] = Task.Run(() =>
+                tasks[tmp] = Task.Run(() =>
                 {
                     var iSInstance = new AutoISClicker.ISInstance();
                     iSInstance.LoginToIS(AutoISClicker.Utilities.UCO, AutoISClicker.Utilities.Password);
 
-                    iSInstance.SignUpForGroupsFromSubject(files[tmp]);
+                    var fileLines = System.IO.File.ReadLines(files[tmp]);
 
-                    // iSInstance.Driver.Quit();
+                    // here wait for time
+
+                    // 
+
+                    iSInstance.SignUpForGroupsFromSubject(fileLines);
                 });
             }
 

@@ -14,10 +14,10 @@ namespace AutoISClicker
         public static int SemesterDurationInWeeks = (SemesterEnd - SemesterStart).Days / 7;
 
 
-        private const int DAYS_IN_WEEK = 5;
+        public const int DAYS_IN_WEEK = 5;
 
         // Enum should be used here if we will ever use this construct
-        private static int DayToOffset(string day)
+        public static int DayToOffset(string day)
         {
             return day.Split(" ")[0] switch
             {
@@ -32,14 +32,22 @@ namespace AutoISClicker
             };
         }
 
-        private static DateTime DateFromTime(XmlAttribute time, int offset)
+        // Somehow merge these two
+        public static DateTime DateFromTime(String time, int offset)
+        {
+            var hourMinute = time.Split(':');
+
+            return new DateTime(SemesterStart.Year, SemesterStart.Month, SemesterStart.Day, Int32.Parse(hourMinute[0]), Int32.Parse(hourMinute[1]), 0).AddDays(offset);
+        }
+
+        public static DateTime DateFromTime(XmlAttribute time, int offset)
         {
             var hourMinute = time.Value.Split(':');
 
             return new DateTime(SemesterStart.Year, SemesterStart.Month, SemesterStart.Day, Int32.Parse(hourMinute[0]), Int32.Parse(hourMinute[1]), 0).AddDays(offset);
         }
 
-        private static Subject SubjectFromSlot(XmlNode slot, int offset)
+        public static Subject SubjectFromSlot(XmlNode slot, int offset)
         {
             var attributes = slot.Attributes;
 
@@ -95,7 +103,7 @@ namespace AutoISClicker
             return new Subject(fromTime, toTime, subjectName, subjectCode, rooms);
         }
 
-        private static Subject BreakFromSlot(XmlNode slot, int offset)
+        public static Subject BreakFromSlot(XmlNode slot, int offset)
         {
             var attributes = slot.Attributes;
 
@@ -167,10 +175,74 @@ namespace AutoISClicker
             {
                 using var reader = new StreamReader(folderPath + Enum.GetName(typeof(DayOfWeek), (i + 1) % 7) + ".xml");
 
-                timetable[i] = (List<Subject>) serializer.Deserialize(reader);
+                timetable[i] = (List<Subject>)serializer.Deserialize(reader);
             }
 
             return timetable;
+        }
+
+
+        public static bool InsertSubjectToTimetable(List<Subject>[] timetable, Subject subject)
+        {
+
+            int day = (((int)subject.SubjectStart.DayOfWeek) - 1) % 7;
+
+            bool canInsert = false;
+
+            // I am not expecting for you to have a one hour long subject at the end of the day => if you do, this will be a bug!
+            // This also only works for 2 hour long seminars => if there is enough time, fix this
+            for (int i = 0; i < timetable[day].Count() - 1; i++)
+            {
+                if (timetable[day][i].IsBreak && timetable[day][i + 1].IsBreak &&
+                    timetable[day][i].SubjectStart <= subject.SubjectStart && timetable[day][i + 1].SubjectEnd >= subject.SubjectEnd)
+                {
+                    timetable[day].Insert(i, subject);
+                    timetable[day].RemoveRange(i + 1, 2);
+                    canInsert = true;
+                }
+
+            }
+            return canInsert;
+        }
+
+        public static List<Subject>[] CheckForConflictsInTimetable(List<Subject>[] timetable, string dirPath = "./../../../data/subjects/")
+        {
+            var iSInstance = new AutoISClicker.ISInstance();
+            iSInstance.LoginToIS(AutoISClicker.Utilities.UCO, AutoISClicker.Utilities.Password);
+
+            var files = Directory.EnumerateFiles(dirPath).ToArray();
+
+            foreach (var file in files)
+            {
+                Console.WriteLine("Now working on: " + file);
+                var fileLines = System.IO.File.ReadLines(file);
+
+                foreach (var line in fileLines)
+                {
+                    var subject = iSInstance.ParseSubjectFromGroupSignUp(line);
+
+                    bool canInsert = InsertSubjectToTimetable(timetable, subject);
+
+                    Console.WriteLine($"Can insert: {canInsert} - {line}");
+                }
+
+                Console.WriteLine("\n");
+            }
+
+            return timetable;
+        }
+
+        public static void PrintTimetable(List<Subject>[] timetable)
+        {
+            foreach (var day in timetable)
+            {
+                foreach (var slot in day)
+                {
+                    Console.WriteLine(slot.ToString());
+                }
+
+                Console.WriteLine("\n\n");
+            }
         }
     }
 }
