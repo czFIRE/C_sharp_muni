@@ -1,43 +1,80 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using AutoISClicker;
 
-var time = new AutoISClicker.ISTime();
-Console.WriteLine(time.GetISTime());
+Console.WriteLine("Welcome to AutoISClicker!\n");
 
-var timetable = AutoISClicker.TimetableUtils.DeserializeTimetableFromISExport("./../../../data/sample_timetable.xml");
+AutoISClicker.Utilities.GetUserLoginData();
 
-AutoISClicker.TimetableUtils.SerializeTimetable(timetable, "./../../../data/serialized/");
-var timetab2 = AutoISClicker.TimetableUtils.DeserializeTimetable("./../../../data/serialized/");
+Console.WriteLine("\nWhich mode would you like to do:");
 
-AutoISClicker.TimetableUtils.PrintTimetable(timetab2);
+foreach (var value in Enum.GetValues(typeof(Timetable.CreationMode)))
+{
+    Console.WriteLine('\t' + value.ToString());
+}
+Console.WriteLine();
 
-AutoISClicker.Utilities.GetUserLoginData("./../../../../data");
+Timetable.CreationMode mode;
+try
+{
+    mode = (Timetable.CreationMode)Enum.Parse(typeof(Timetable.CreationMode), Console.ReadLine());
+}
+catch
+{
+    Console.Error.WriteLine("Your typing skills are hilariously bad! Try again next time!");
+    throw;
+}
 
-AutoISClicker.TimetableUtils.CheckForConflictsInTimetable(timetab2);
+string tmp = mode == Timetable.CreationMode.SAVED_XML ? "folder" : "file";
 
-AutoISClicker.TimetableUtils.PrintTimetable(timetab2);
+Console.WriteLine($"\nPlease input the {tmp} with the timetable:");
 
+Timetable timetable = new Timetable(Console.ReadLine(), mode);
+
+Console.WriteLine("\nPlease input the folder with registration load:");
+string regLoc = Console.ReadLine();
+
+
+Console.WriteLine("\nNow select the mode you wanna run (input the number in front):");
+
+var type = typeof(IRunMode);
+var types = AppDomain.CurrentDomain.GetAssemblies()
+    .SelectMany(s => s.GetTypes())
+    .Where(p => type.IsAssignableFrom(p))
+    .Where(type => !type.IsAbstract &&
+                   !type.IsGenericType)
+    .Select(type => type.GetConstructor(Type.EmptyTypes))
+    .ToList();
+
+for (int i = 0; i < types.Count(); i++)
+{
+    Console.WriteLine($"{i})\t{types[i].DeclaringType.Name}");
+}
+Console.WriteLine();
+
+IRunMode modeToRun;
+try
+{
+    int runMode = Int32.Parse(Console.ReadLine());
+    modeToRun = (IRunMode)types[runMode].Invoke(new object[] { });
+}
+catch
+{
+    Console.Error.WriteLine("Your typing skills are hilariously bad! Try again next time!");
+    throw;
+}
+
+modeToRun.RunTask(timetable, regLoc);
+
+System.GC.Collect();
 return;
 
-
 /*
-var iSInstance = new AutoISClicker.ISInstance();
-var driver = iSInstance.LoginToIS(AutoISClicker.Utilities.UCO, AutoISClicker.Utilities.Password);
 
-var hehe = iSInstance.ParseSubjectFromGroupSignUp("https://is.muni.cz/auth/seminare/student?fakulta=1433;obdobi=8404;studium=1144620;predmet=1406159;prihlasit=667837;akce=podrob;provest=1;stopwindow=1;design=m");
+ Cheatsheet:
+
+./../../../../data
+ISEXPORT
+./../../../data/sample_timetable.xml
+./../../../data/subjects/
+0
+
 */
-
-//return;
-
-
-
-// iSInstance.SignUpForGroup("https://is.muni.cz/auth/seminare/student?fakulta=1433;obdobi=8404;studium=1144620;predmet=1406159;prihlasit=667837;akce=podrob;provest=1;stopwindow=1;design=m");
-
-AutoISClicker.Utilities.RunRealTask();
-
-Console.WriteLine("Operations: " + AutoISClicker.Utilities.OperationCounter);
-
-Console.ReadLine();
-
-Console.WriteLine("Operations: " + AutoISClicker.Utilities.OperationCounter);
-
-// driver.Quit();

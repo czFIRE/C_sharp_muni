@@ -41,7 +41,7 @@
 
         }
 
-        public override string? ToString()
+        public override string ToString()
         {
             if (IsBreak)
             {

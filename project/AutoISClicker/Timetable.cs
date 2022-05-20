@@ -3,56 +3,32 @@ using System.Xml.Serialization;
 
 namespace AutoISClicker
 {
-    public class TimetableUtils
+    public class Timetable
     {
-        // TODO: Add loading from WebPage => https://is.muni.cz/predmety/obdobi
-        // start => /html/body/div[1]/div[2]/div[2]/main/form/table[1]/tbody/tr[17]/td[9]
-        // end => /html/body/div[1]/div[2]/div[2]/main/form/table[1]/tbody/tr[18]/td[8]
-        public static DateTime SemesterStart { get; set; } = new DateTime(2022, 9, 12);
-        public static DateTime SemesterEnd { get; set; } = new DateTime(2022, 12, 12);
+        public List<Subject>[] timetable;
 
-        public static int SemesterDurationInWeeks = (SemesterEnd - SemesterStart).Days / 7;
-
-
-        public const int DAYS_IN_WEEK = 5;
-
-        // Enum should be used here if we will ever use this construct
-        public static int DayToOffset(string day)
+        public enum CreationMode
         {
-            return day.Split(" ")[0] switch
+            ISEXPORT,
+            SAVED_XML
+        }
+
+        public Timetable(string filename, CreationMode mode = CreationMode.ISEXPORT)
+        {
+            timetable = mode switch
             {
-                "Po" => 0,
-                "Út" => 1,
-                "St" => 2,
-                "Čt" => 3,
-                "Pá" => 4,
-                "So" => 5,
-                "Ne" => 6,
-                _ => throw new ArgumentException("Invalid day in file"),
+                CreationMode.ISEXPORT => DeserializeTimetableFromISExport(filename),
+                CreationMode.SAVED_XML => DeserializeTimetable(filename),
+                _ => throw new NotImplementedException(),
             };
         }
 
-        // Somehow merge these two
-        public static DateTime DateFromTime(String time, int offset)
-        {
-            var hourMinute = time.Split(':');
-
-            return new DateTime(SemesterStart.Year, SemesterStart.Month, SemesterStart.Day, Int32.Parse(hourMinute[0]), Int32.Parse(hourMinute[1]), 0).AddDays(offset);
-        }
-
-        public static DateTime DateFromTime(XmlAttribute time, int offset)
-        {
-            var hourMinute = time.Value.Split(':');
-
-            return new DateTime(SemesterStart.Year, SemesterStart.Month, SemesterStart.Day, Int32.Parse(hourMinute[0]), Int32.Parse(hourMinute[1]), 0).AddDays(offset);
-        }
-
-        public static Subject SubjectFromSlot(XmlNode slot, int offset)
+        public Subject SubjectFromSlot(XmlNode slot, int offset)
         {
             var attributes = slot.Attributes;
 
-            DateTime fromTime = DateFromTime(attributes["odcas"], offset);
-            DateTime toTime = DateFromTime(attributes["docas"], offset);
+            DateTime fromTime = Utilities.DateFromTime(attributes["odcas"], offset);
+            DateTime toTime = Utilities.DateFromTime(attributes["docas"], offset);
 
             // this will take all from the whole file?!
             // var rooms = slot.SelectNodes("//*[local-name()='mistnostozn']");
@@ -103,22 +79,22 @@ namespace AutoISClicker
             return new Subject(fromTime, toTime, subjectName, subjectCode, rooms);
         }
 
-        public static Subject BreakFromSlot(XmlNode slot, int offset)
+        public Subject BreakFromSlot(XmlNode slot, int offset)
         {
             var attributes = slot.Attributes;
 
             var tmp = attributes["odcas"];
 
-            DateTime fromTime = DateFromTime(attributes["odcas"], offset);
-            DateTime toTime = DateFromTime(attributes["docas"], offset);
+            DateTime fromTime = Utilities.DateFromTime(attributes["odcas"], offset);
+            DateTime toTime = Utilities.DateFromTime(attributes["docas"], offset);
 
             return new Subject(fromTime, toTime);
         }
 
-        public static List<Subject>[] DeserializeTimetableFromISExport(string filename)
+        public List<Subject>[] DeserializeTimetableFromISExport(string filename)
         {
-            List<Subject>[] result = new List<Subject>[DAYS_IN_WEEK];
-            for (int i = 0; i < DAYS_IN_WEEK; i++)
+            List<Subject>[] result = new List<Subject>[Utilities.DAYS_IN_WEEK];
+            for (int i = 0; i < Utilities.DAYS_IN_WEEK; i++)
             {
                 result[i] = new List<Subject>();
             }
@@ -133,7 +109,7 @@ namespace AutoISClicker
             foreach (XmlNode day in nodeList)
             {
 
-                int offset = DayToOffset(day.Attributes["id"].Value);
+                int offset = Utilities.DayToOffset(day.Attributes["id"].Value);
 
                 // for each row
                 foreach (XmlNode row in day.ChildNodes)
@@ -153,7 +129,7 @@ namespace AutoISClicker
             return result;
         }
 
-        public static void SerializeTimetable(List<Subject>[] timetable, string folderPath = "./../../../data/serialized/")
+        public void SerializeTimetable(string folderPath = "./../../../data/serialized/")
         {
             var serializer = new XmlSerializer(typeof(List<Subject>), new Type[] { typeof(Subject) });
             for (int i = 0; i < timetable.Length; i++)
@@ -165,13 +141,13 @@ namespace AutoISClicker
 
         }
 
-        public static List<Subject>[] DeserializeTimetable(string folderPath = "./../../../data/serialized/")
+        public List<Subject>[] DeserializeTimetable(string folderPath = "./../../../data/serialized/")
         {
             // maybe replace this with directory "size"
-            List<Subject>[] timetable = new List<Subject>[DAYS_IN_WEEK];
+            List<Subject>[] timetable = new List<Subject>[Utilities.DAYS_IN_WEEK];
             var serializer = new XmlSerializer(typeof(List<Subject>), new Type[] { typeof(Subject) });
 
-            for (int i = 0; i < DAYS_IN_WEEK; i++)
+            for (int i = 0; i < Utilities.DAYS_IN_WEEK; i++)
             {
                 using var reader = new StreamReader(folderPath + Enum.GetName(typeof(DayOfWeek), (i + 1) % 7) + ".xml");
 
@@ -182,7 +158,7 @@ namespace AutoISClicker
         }
 
 
-        public static bool InsertSubjectToTimetable(List<Subject>[] timetable, Subject subject)
+        public bool InsertSubjectToTimetable(Subject subject)
         {
 
             int day = (((int)subject.SubjectStart.DayOfWeek) - 1) % 7;
@@ -205,12 +181,14 @@ namespace AutoISClicker
             return canInsert;
         }
 
-        public static List<Subject>[] CheckForConflictsInTimetable(List<Subject>[] timetable, string dirPath = "./../../../data/subjects/")
+        public bool CheckForConflictsInTimetable(string dirPath = "./../../../data/subjects/")
         {
             var iSInstance = new AutoISClicker.ISInstance();
             iSInstance.LoginToIS(AutoISClicker.Utilities.UCO, AutoISClicker.Utilities.Password);
 
             var files = Directory.EnumerateFiles(dirPath).ToArray();
+
+            bool noConflicts = true;
 
             foreach (var file in files)
             {
@@ -221,7 +199,8 @@ namespace AutoISClicker
                 {
                     var subject = iSInstance.ParseSubjectFromGroupSignUp(line);
 
-                    bool canInsert = InsertSubjectToTimetable(timetable, subject);
+                    bool canInsert = InsertSubjectToTimetable(subject);
+                    noConflicts &= canInsert;
 
                     Console.WriteLine($"Can insert: {canInsert} - {line}");
                 }
@@ -229,10 +208,10 @@ namespace AutoISClicker
                 Console.WriteLine("\n");
             }
 
-            return timetable;
+            return noConflicts;
         }
 
-        public static void PrintTimetable(List<Subject>[] timetable)
+        public void PrintTimetable(List<Subject>[] timetable)
         {
             foreach (var day in timetable)
             {

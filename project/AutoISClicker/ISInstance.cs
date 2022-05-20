@@ -9,7 +9,14 @@ namespace AutoISClicker
         public IWebDriver Driver { get; }
         public ISInstance(string driverLocation = "./../../../WebDriver/")
         {
-            Driver = new FirefoxDriver("./../../../WebDriver/");
+            try
+            {
+                Driver = new FirefoxDriver(driverLocation);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         /// <summary>
@@ -57,17 +64,18 @@ namespace AutoISClicker
             return Driver.FindElement(By.XPath("/html/body/div/div[2]/div/div/h3")).Text == "Úspěšně přihlášeno.";
         }
 
-        public void SignUpForGroupsFromSubject(IEnumerable<string> fileLines)
+        public void SignUpForGroupsFromSubject(IEnumerable<string> fileLines, int tries = 1)
         {
 
-            while (Interlocked.Read(ref Utilities.OperationCounter) < Utilities.OperationLimit)
+            while (tries > 0 && Interlocked.Read(ref Utilities.OperationCounter) < Utilities.OperationLimit)
             {
 
                 foreach (var line in fileLines)
                 {
                     if (this.SignUpForGroup(line))
                     {
-                        Console.WriteLine("Signed up for group: " + line);
+                        Console.WriteLine("SIGNED UP for group: " + line);
+                        return;
                     }
                     else
                     {
@@ -75,7 +83,7 @@ namespace AutoISClicker
                     }
                 }
 
-                return;
+                tries--;
             }
         }
 
@@ -86,10 +94,10 @@ namespace AutoISClicker
 
             var infoLine = infoBox.Text.Split("\n")[0].Trim().Split(" ");
 
-            int offset = TimetableUtils.DayToOffset(infoLine[1]);
+            int offset = Utilities.DayToOffset(infoLine[1]);
 
-            DateTime fromTime = TimetableUtils.DateFromTime(infoLine[9].Split("–")[0], offset);
-            DateTime toTime = TimetableUtils.DateFromTime(infoLine[9].Split("–")[1], offset);
+            DateTime fromTime = Utilities.DateFromTime(infoLine[9].Split("–")[0], offset);
+            DateTime toTime = Utilities.DateFromTime(infoLine[9].Split("–")[1], offset);
 
             string rooms = infoLine[10];
             string subjectCode = infoLine[0];
