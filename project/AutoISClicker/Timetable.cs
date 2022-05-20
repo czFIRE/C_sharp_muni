@@ -170,10 +170,21 @@ namespace AutoISClicker
             for (int i = 0; i < timetable[day].Count() - 1; i++)
             {
                 if (timetable[day][i].IsBreak && timetable[day][i + 1].IsBreak &&
-                    timetable[day][i].SubjectStart <= subject.SubjectStart && timetable[day][i + 1].SubjectEnd >= subject.SubjectEnd)
+                    timetable[day][i].SubjectStart <= subject.SubjectStart && timetable[day][i + 1].SubjectEnd >= subject.SubjectEnd
+                    )
                 {
                     timetable[day].Insert(i, subject);
                     timetable[day].RemoveRange(i + 1, 2);
+                    canInsert = true;
+                }
+
+                // biweekly
+                if (timetable[day][i].Periodicity == 2 && subject.Periodicity == 2 &&
+                    Math.Abs((timetable[day][i].SubjectStart - subject.SubjectStart).TotalDays) == 7 &&
+                    timetable[day][i].SubjectStart <= subject.SubjectStart && timetable[day][i + 1].SubjectEnd >= subject.SubjectEnd
+                    )
+                {
+                    timetable[day].Insert(i, subject);
                     canInsert = true;
                 }
 
