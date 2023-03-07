@@ -1,2 +1,4 @@
-# PV178
-Homeworks for PV178 - Introduction to C#
+# C# course
+Homeworks for a course - Introduction to C#
+
+Contains the homeworks and the final for this course
